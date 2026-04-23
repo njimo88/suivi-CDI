@@ -1,0 +1,126 @@
+[
+  {
+    "entreprise": "Actimage",
+    "poste": "Développeur C#",
+    "localisation": "Strasbourg, Grand Est, France (Sur site)",
+    "contrat": "CDI",
+    "stack": [
+      "C#",
+      ".NET"
+    ],
+    "contact": "Brice DUMONT",
+    "url": "",
+    "description": "Développeur C# chez Actimage, Strasbourg sur site. Soyez parmi les premiers candidats (peu de candidatures). 1 relation LinkedIn (Brice DUMONT). Offre récente (il y a 1 semaine).",
+    "source": "LinkedIn",
+    "score": 55,
+    "detail_score": {
+      "stack": 10,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 5
+    },
+    "id": "54650cba9bf1",
+    "statut": "postule",
+    "date_ajout": "2026-04-21",
+    "date_action": "2026-04-21"
+  },
+  {
+    "entreprise": "Humanship Partner",
+    "poste": "Analyste/Développeur C#, HPQC, PHP",
+    "localisation": "Strasbourg (67)",
+    "contrat": "CDI",
+    "stack": [
+      "C#",
+      ".NET",
+      "PHP"
+    ],
+    "contact": "",
+    "url": "",
+    "description": "Poste Analyste/Développeur C#, HPQC, PHP chez Humanship Partner, cabinet de recrutement spécialisé IT, Strasbourg (code 67). CDI.",
+    "source": "LinkedIn",
+    "score": 55,
+    "detail_score": {
+      "stack": 15,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 0
+    },
+    "id": "a426059af4d1",
+    "statut": "postule",
+    "date_ajout": "2026-04-21",
+    "date_action": "2026-04-21"
+  },
+  {
+    "entreprise": "Humanship Partner",
+    "poste": "Développeur C# confirmé",
+    "localisation": "Strasbourg (67)",
+    "contrat": "CDI",
+    "stack": [
+      "C#",
+      ".NET"
+    ],
+    "contact": "",
+    "url": "",
+    "description": "Poste Développeur C# confirmé chez Humanship Partner, cabinet de recrutement IT Strasbourg. CDI.",
+    "source": "LinkedIn",
+    "score": 50,
+    "detail_score": {
+      "stack": 10,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 0
+    },
+    "id": "1045ebe39078",
+    "statut": "postule",
+    "date_ajout": "2026-04-21",
+    "date_action": "2026-04-21"
+  },
+  {
+    "entreprise": "Euro-Information",
+    "poste": "Informaticien S&R - Développement Full Stack",
+    "localisation": "Strasbourg et périphérie (Hybride)",
+    "contrat": "CDI",
+    "stack": [
+      "full stack"
+    ],
+    "contact": "Mehdi Bouzoubaa",
+    "url": "",
+    "description": "Offre Full Stack chez Euro-Information (filiale IT du Crédit Mutuel), Strasbourg Hybride, salaire affiché 37-60K€. 10 relations LinkedIn dont Mehdi Bouzoubaa. Poste S&R (Systèmes & Réseaux) développement full stack. Euro-Information développe les logiciels bancaires du groupe Crédit Mutuel.",
+    "source": "LinkedIn",
+    "score": 45,
+    "detail_score": {
+      "stack": 0,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 5
+    },
+    "id": "df0bccdf11d2",
+    "statut": "postule",
+    "date_ajout": "2026-04-21",
+    "date_action": "2026-04-21"
+  },
+  {
+    "entreprise": "MCA",
+    "poste": "Ingénieur Développement Java",
+    "localisation": "Strasbourg, Grand Est, France (Hybride)",
+    "contrat": "CDI",
+    "stack": [
+      "Java"
+    ],
+    "contact": "",
+    "url": "",
+    "description": "Ingénieur Développement Java chez MCA, Strasbourg Hybride. CDI. 2 anciens élèves CESI.",
+    "source": "LinkedIn",
+    "score": 40,
+    "detail_score": {
+      "stack": 0,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 0
+    },
+    "id": "4629f2149512",
+    "statut": "postule",
+    "date_ajout": "2026-04-21",
+    "date_action": "2026-04-21"
+  }
+]

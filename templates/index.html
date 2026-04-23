@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi CDI — Nedjmeddine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text2: #64748b;
+      --text3: #94a3b8;
+      --primary: #6366f1;
+      --primary-light: #eef2ff;
+      --green: #22c55e;
+      --green-light: #f0fdf4;
+      --orange: #f59e0b;
+      --orange-light: #fffbeb;
+      --red: #ef4444;
+      --red-light: #fef2f2;
+      --blue: #3b82f6;
+      --blue-light: #eff6ff;
+      --purple: #8b5cf6;
+      --purple-light: #f5f3ff;
+      --gray-light: #f8fafc;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+    }
+
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: stretch;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 0;
+      margin-right: 32px;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .logo-text { font-weight: 700; font-size: 1rem; color: var(--text); }
+    .logo-sub { font-size: 0.72rem; color: var(--text2); }
+
+    /* ── Nav tabs ── */
+    nav { display: flex; align-items: stretch; gap: 2px; flex: 1; }
+    .nav-tab {
+      display: flex; align-items: center; gap: 7px;
+      padding: 0 18px;
+      font-size: 0.85rem; font-weight: 500;
+      color: var(--text2);
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+      margin-bottom: -1px;
+    }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .nav-badge {
+      background: var(--primary); color: white;
+      border-radius: 99px; padding: 1px 7px;
+      font-size: 0.68rem; font-weight: 700;
+    }
+    .nav-badge.orange { background: var(--orange); }
+    .nav-badge.green { background: var(--green); }
+
+    /* Header right */
+    .header-right { margin-left: auto; display: flex; align-items: center; }
+    .date-pill { font-size: 0.78rem; color: var(--text2); background: var(--gray-light); padding: 5px 12px; border-radius: 99px; }
+
+    /* ── Page ── */
+    .page { display: none; max-width: 980px; margin: 0 auto; padding: 28px 20px; }
+    .page.active { display: block; }
+
+    /* ── Stats bar ── */
+    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+    }
+    .stat-card .val { font-size: 1.9rem; font-weight: 800; line-height: 1; }
+    .stat-card .lbl { font-size: 0.72rem; color: var(--text2); margin-top: 4px; text-transform: uppercase; letter-spacing: .04em; }
+    .stat-card.c-primary .val { color: var(--primary); }
+    .stat-card.c-red .val { color: var(--red); }
+    .stat-card.c-green .val { color: var(--green); }
+    .stat-card.c-orange .val { color: var(--orange); }
+    .stat-card.c-blue .val { color: var(--blue); }
+
+    /* ── Section ── */
+    .section { margin-bottom: 28px; }
+    .section-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .section-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+    .section-count { font-size: 0.78rem; color: var(--text2); background: var(--gray-light); border: 1px solid var(--border); padding: 2px 9px; border-radius: 99px; }
+
+    /* ── Relance card ── */
+    .relance-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+      transition: box-shadow .15s, border-color .15s;
+    }
+    .relance-card:hover { box-shadow: var(--shadow-md); border-color: #c7d2fe; }
+    .relance-card.critique { border-left: 4px solid var(--red); }
+    .relance-card.importante { border-left: 4px solid var(--orange); }
+    .relance-card.standard { border-left: 4px solid var(--text3); }
+    .relance-card.cloture { border-left: 4px solid #dc2626; background: #fffafa; }
+
+    .linkedin-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid #0a66c2;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+    }
+    .linkedin-card.complet { border-left-color: var(--green); }
+    .linkedin-entreprise-input {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      width: 220px;
+      margin-top: 8px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .linkedin-entreprise-input:focus { border-color: var(--primary); }
+    .linkedin-msg-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      margin-top: 10px;
+      color: var(--text);
+      position: relative;
+    }
+
+    .card-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-name { font-weight: 700; font-size: 1rem; }
+    .card-meta { font-size: 0.8rem; color: var(--text2); margin-top: 3px; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 99px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .badge.red { background: var(--red-light); color: #dc2626; }
+    .badge.orange { background: var(--orange-light); color: #d97706; }
+    .badge.gray { background: var(--gray-light); color: var(--text2); border: 1px solid var(--border); }
+    .badge.purple { background: var(--purple-light); color: var(--purple); }
+    .badge.blue { background: var(--blue-light); color: var(--blue); }
+    .badge.green { background: var(--green-light); color: #16a34a; }
+
+    .msg-toggle {
+      background: none; border: 1px solid var(--border);
+      color: var(--text2); font-size: 0.78rem;
+      padding: 6px 14px; border-radius: 7px;
+      cursor: pointer; margin-top: 10px;
+      transition: all .15s;
+    }
+    .msg-toggle:hover { border-color: var(--primary); color: var(--primary); }
+
+    .msg-box {
+      display: none; margin-top: 12px;
+      background: var(--gray-light); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px;
+      font-size: 0.83rem; line-height: 1.7;
+      color: var(--text); white-space: pre-wrap;
+      position: relative;
+    }
+    .msg-box.open { display: block; }
+
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text2); font-size: 0.72rem;
+      padding: 4px 12px; border-radius: 6px;
+      cursor: pointer; transition: all .15s;
+    }
+    .copy-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .copy-btn.copied { background: var(--green-light); border-color: var(--green); color: #16a34a; }
+
+    /* ── Offre card ── */
+    .offre-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 20px; margin-bottom: 10px;
+      box-shadow: var(--shadow); transition: all .2s;
+    }
+    .offre-card:hover { box-shadow: var(--shadow-md); border-color: #c7d2fe; }
+    .offre-card.sortant { opacity: 0; transform: translateX(20px); }
+
+    .offre-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .score-ring {
+      width: 54px; height: 54px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; flex-shrink: 0;
+      font-weight: 800; font-size: 1rem; line-height: 1;
+    }
+    .score-ring .score-lbl { font-size: 0.6rem; font-weight: 500; opacity: .7; }
+    .score-ring.haut { background: var(--green-light); color: #16a34a; border: 2px solid #bbf7d0; }
+    .score-ring.moyen { background: var(--orange-light); color: #d97706; border: 2px solid #fde68a; }
+    .score-ring.bas { background: var(--gray-light); color: var(--text2); border: 2px solid var(--border); }
+
+    .offre-name { font-weight: 700; font-size: 1rem; }
+    .offre-poste { font-size: 0.82rem; color: var(--text2); margin-top: 2px; }
+    .offre-pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+    .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 500; }
+    .pill.loc { background: var(--blue-light); color: var(--blue); }
+    .pill.cdi { background: var(--green-light); color: #16a34a; }
+    .pill.src { background: var(--orange-light); color: #d97706; }
+    .pill.contact { background: var(--purple-light); color: var(--purple); }
+    .pill.new { background: #ecfdf5; color: #059669; border: 1px solid #6ee7b7; }
+    .pill.stack { background: var(--primary-light); color: var(--primary); }
+
+    .score-detail { font-size: 0.72rem; color: var(--text3); margin-bottom: 12px; }
+    .offre-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn { padding: 8px 18px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
+    .btn-green { background: var(--green-light); color: #16a34a; border: 1px solid #bbf7d0; }
+    .btn-green:hover { background: #dcfce7; }
+    .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--text2); color: var(--text); }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #4f46e5; }
+    .btn-sm { padding: 5px 12px; font-size: 0.75rem; }
+    .btn-green { background: var(--green-light); color: #16a34a; }
+    .btn-green:hover { background: #dcfce7; }
+    .btn-gray { background: var(--gray-light); color: var(--text2); }
+    .btn-gray:hover { background: var(--border); }
+    .btn-link { background: transparent; color: var(--primary); border: 1px solid #c7d2fe; }
+    .btn-link:hover { background: var(--primary-light); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Pipeline ── */
+    .pipeline-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .ptab {
+      padding: 6px 16px; border-radius: 99px;
+      font-size: 0.8rem; font-weight: 500;
+      border: 1px solid var(--border);
+      cursor: pointer; transition: all .15s;
+      background: var(--surface); color: var(--text2);
+    }
+    .ptab.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .ptab:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+    .pipeline-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 18px; margin-bottom: 8px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px 16px;
+      align-items: center;
+      transition: box-shadow .15s;
+    }
+    .pipeline-card:hover { box-shadow: var(--shadow-md); }
+
+    .pc-name { font-weight: 700; font-size: 0.95rem; }
+    .pc-sub { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
+    .pc-right { display: flex; align-items: center; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+    .silence-pill {
+      padding: 3px 10px; border-radius: 99px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .silence-pill.ok { background: var(--green-light); color: #16a34a; }
+    .silence-pill.warn { background: var(--orange-light); color: #d97706; }
+    .silence-pill.danger { background: var(--red-light); color: #dc2626; }
+    .silence-pill.none { background: var(--gray-light); color: var(--text3); }
+
+    .status-dot {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
+    }
+
+    /* ── Email analyser ── */
+    .analyser-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px; box-shadow: var(--shadow);
+    }
+    .analyser-box h2 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .analyser-box p { font-size: 0.82rem; color: var(--text2); margin-bottom: 16px; line-height: 1.5; }
+
+    textarea {
+      width: 100%; background: var(--gray-light);
+      border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-size: 0.83rem;
+      padding: 14px; resize: vertical; min-height: 130px;
+      font-family: inherit; transition: border-color .15s;
+    }
+    textarea:focus { outline: none; border-color: var(--primary); background: white; }
+    textarea::placeholder { color: var(--text3); }
+
+    .analyse-item {
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 8px;
+      display: flex; align-items: flex-start; gap: 12px;
+      transition: border-color .15s;
+    }
+    .analyse-item.refus { border-left: 4px solid var(--red); background: #fffafa; }
+    .analyse-item.entretien { border-left: 4px solid var(--green); background: #f0fdf4; }
+    .analyse-item.pas_opport { border-left: 4px solid var(--text3); }
+    .analyse-item.ignore { opacity: .5; }
+    .analyse-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .analyse-body { flex: 1; }
+    .analyse-ent { font-weight: 700; font-size: 0.9rem; }
+    .analyse-txt { font-size: 0.76rem; color: var(--text2); margin-top: 2px; }
+    .analyse-action { font-size: 0.78rem; color: var(--primary); margin-top: 5px; font-weight: 500; }
+    .analyse-check { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 0.78rem; color: var(--text2); }
+    .analyse-check input { cursor: pointer; accent-color: var(--primary); }
+
+    .btn-appliquer {
+      background: var(--green); color: white;
+      border: none; padding: 10px 22px;
+      border-radius: 8px; font-size: 0.85rem;
+      font-weight: 700; cursor: pointer;
+      margin-top: 14px; transition: background .15s;
+    }
+    .btn-appliquer:hover { background: #16a34a; }
+
+    /* ── Upload ── */
+    .upload-zone {
+      border: 2px dashed var(--border); border-radius: 10px;
+      padding: 24px; text-align: center; cursor: pointer;
+      transition: all .15s; margin-top: 12px;
+    }
+    .upload-zone:hover { border-color: var(--primary); background: var(--primary-light); }
+    .upload-zone input { display: none; }
+    .upload-icon { font-size: 2rem; margin-bottom: 8px; }
+    .upload-txt { font-size: 0.82rem; color: var(--text2); }
+    .upload-txt strong { color: var(--primary); }
+    .upload-status { margin-top: 10px; font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; display: none; }
+    .upload-status.ok { background: var(--green-light); color: #16a34a; display: block; }
+    .upload-status.err { background: var(--red-light); color: #dc2626; display: block; }
+
+    /* ── Guide ── */
+    .guide-hero {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 16px; padding: 32px;
+      color: white; margin-bottom: 24px; text-align: center;
+    }
+    .guide-hero h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+    .guide-hero p { opacity: .85; font-size: 0.9rem; }
+
+    .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+    .guide-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .guide-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .guide-card ul { list-style: none; }
+    .guide-card li { font-size: 0.82rem; color: var(--text2); padding: 5px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 8px; }
+    .guide-card li:last-child { border-bottom: none; }
+    .guide-card li::before { content: "→"; color: var(--primary); flex-shrink: 0; }
+
+    .guide-rules {
+      background: #fffbeb; border: 1px solid #fde68a;
+      border-radius: 14px; padding: 20px;
+    }
+    .guide-rules h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; color: #92400e; }
+    .guide-rules li { font-size: 0.82rem; color: #78350f; padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; list-style: none; }
+    .guide-rules li::before { content: "⚠️"; flex-shrink: 0; }
+
+    .cmd-box {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--gray-light); border: 1px solid var(--border);
+      border-radius: 7px; padding: 4px 12px;
+      font-size: 0.8rem; font-family: monospace; color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* ── Spinner & Toast ── */
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(99,102,241,.3); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty { font-size: 0.83rem; color: var(--text3); padding: 24px 0; text-align: center; }
+
+    #toast {
+      position: fixed; bottom: 24px; right: 24px;
+      padding: 12px 20px; border-radius: 10px;
+      font-size: 0.83rem; font-weight: 600;
+      display: none; z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+    #toast.ok { background: var(--green); color: white; }
+    #toast.err { background: var(--red); color: white; }
+
+    .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+      .guide-grid { grid-template-columns: 1fr; }
+      .pipeline-card { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">💼</div>
+    <div>
+      <div class="logo-text">Suivi CDI</div>
+      <div class="logo-sub">Nedjmeddine Djilly</div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-tab active" onclick="goTab('dashboard', this)">
+      🏠 Dashboard
+    </div>
+    <div class="nav-tab" onclick="goTab('offres', this)">
+      🎯 Offres
+      <span class="nav-badge" id="nb-offres">0</span>
+    </div>
+    <div class="nav-tab" onclick="goTab('pipeline', this)">
+      📊 Pipeline
+    </div>
+    <div class="nav-tab" onclick="goTab('guide', this)">
+      📖 Guide
+    </div>
+  </nav>
+
+  <div class="header-right">
+    <div class="date-pill" id="today-date"></div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- PAGE : DASHBOARD                                              -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-dashboard">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card c-primary"><div class="val" id="s-actifs">—</div><div class="lbl">Process actifs</div></div>
+    <div class="stat-card c-red"><div class="val" id="s-critiques">—</div><div class="lbl">Relances critiques</div></div>
+    <div class="stat-card c-blue"><div class="val" id="s-haute">—</div><div class="lbl">Haute priorité</div></div>
+    <div class="stat-card c-green"><div class="val" id="s-entretiens">—</div><div class="lbl">Entretiens passés</div></div>
+    <div class="stat-card c-orange"><div class="val" id="s-archives">—</div><div class="lbl">Archivées</div></div>
+  </div>
+
+  <!-- Relances -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🔔 Relances à envoyer</div>
+      <div class="section-count" id="relances-count">—</div>
+    </div>
+    <div id="relances-list"><div class="empty">Chargement…</div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Messages LinkedIn à envoyer -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">💬 Connexions LinkedIn — Messages à envoyer</div>
+      <div class="section-count" id="linkedin-count">—</div>
+    </div>
+    <div id="linkedin-list"><div class="empty">Chargement…</div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Analyser emails -->
+  <div class="analyser-box">
+    <h2>📧 Analyser mes emails / messages LinkedIn</h2>
+    <p>Colle ici tes emails ou conversations LinkedIn reçus. Je détecte les refus, invitations, réponses et je te propose les mises à jour Excel à valider avant d'écrire quoi que ce soit.</p>
+    <textarea id="email-input" placeholder="Colle tes emails ou messages ici…
+
+Exemples :
+— Refus : 'nous n'avons pas retenu votre candidature…'
+— Entretien : 'nous souhaitons vous rencontrer…'
+— Réponse LinkedIn : 'j'ai transmis votre CV à…'"></textarea>
+    <button class="btn btn-primary" id="btn-analyser" onclick="analyserEmails()" style="margin-top:12px">
+      Analyser
+    </button>
+    <div id="analyse-resultats"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Upload -->
+  <div>
+    <div class="section-header">
+      <div class="section-title">📁 Mettre à jour le fichier Excel</div>
+    </div>
+    <label class="upload-zone">
+      <input type="file" id="excel-input" accept=".xlsx" onchange="uploadExcel(this)">
+      <div class="upload-icon">📂</div>
+      <div class="upload-txt"><strong>Clique ici</strong> ou glisse ton <code>suivi.xlsx</code> modifié</div>
+    </label>
+    <div class="upload-status" id="upload-status"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- PAGE : OFFRES                                                 -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-offres">
+
+  <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-card c-primary"><div class="val" id="o-ap">—</div><div class="lbl">À postuler</div></div>
+    <div class="stat-card c-green"><div class="val" id="o-p">—</div><div class="lbl">Postulé</div></div>
+    <div class="stat-card"><div class="val" id="o-i">—</div><div class="lbl">Ignorées</div></div>
+  </div>
+
+  <div class="section">
+    <div class="pipeline-tabs">
+      <div class="ptab active" onclick="switchOffreTab('a_postuler',this)">À postuler</div>
+      <div class="ptab" onclick="switchOffreTab('postule',this)">Postulé ✓</div>
+      <div class="ptab" onclick="switchOffreTab('ignore',this)">Ignorées</div>
+    </div>
+    <div id="offres-list"><div class="empty">Chargement…</div></div>
+    <p style="font-size:.75rem;color:var(--text3);margin-top:10px;">
+      💡 Les offres sont ajoutées automatiquement quand tu lances <span class="cmd-box">/daily</span> dans Claude Code.
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- PAGE : PIPELINE                                               -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-pipeline">
+
+  <div class="section">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      <div class="pipeline-tabs" id="pipeline-tabs" style="margin-bottom:0">
+        <div class="ptab active" onclick="switchPipelineTab('actifs',this)">En cours</div>
+        <div class="ptab" onclick="switchPipelineTab('entretien',this)">Entretiens</div>
+        <div class="ptab" onclick="switchPipelineTab('archives',this)">Archivées</div>
+        <div class="ptab" onclick="switchPipelineTab('tout',this)">Tout</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span style="font-size:.75rem;color:var(--text3)">Trier par</span>
+        <select id="pipeline-sort" onchange="afficherPipeline()" style="font-size:.78rem;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text1);cursor:pointer">
+          <option value="urgence">Urgence</option>
+          <option value="recent">Date récente</option>
+          <option value="silence">Silence ↓</option>
+        </select>
+      </div>
+    </div>
+    <div id="pipeline-list"><div class="empty">Chargement…</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- PAGE : GUIDE                                                  -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-guide">
+
+  <div class="guide-hero">
+    <h1>💼 Comment utiliser ton outil CDI</h1>
+    <p>Tout ce que tu dois savoir en 2 minutes</p>
+  </div>
+
+  <div class="guide-grid">
+
+    <div class="guide-card">
+      <h3>🌅 Chaque matin (2 min)</h3>
+      <ul>
+        <li>Ouvre <strong>http://localhost:5000</strong> — les relances du jour s'affichent automatiquement</li>
+        <li>Onglet <strong>Offres</strong> → vois les offres scorées à postuler</li>
+        <li>Clique <strong>"J'ai postulé"</strong> quand tu envoies une candidature</li>
+      </ul>
+    </div>
+
+    <div class="guide-card">
+      <h3>🌆 Chaque soir (5 min)</h3>
+      <ul>
+        <li>Tape <span class="cmd-box">/daily</span> dans Claude Code → il lit ton Gmail, score les nouvelles offres</li>
+        <li>Si tu as eu un échange LinkedIn → tape <span class="cmd-box">/log</span> en décrivant l'échange en français</li>
+        <li>Les nouvelles offres apparaissent dans l'onglet <strong>Offres</strong></li>
+      </ul>
+    </div>
+
+    <div class="guide-card">
+      <h3>📅 Chaque dimanche (10 min)</h3>
+      <ul>
+        <li>Tape <span class="cmd-box">/briefing</span> → plan complet de la semaine</li>
+        <li>Archive les candidatures mortes si le briefing te le suggère</li>
+        <li>Fixe tes 5 actions prioritaires pour la semaine</li>
+      </ul>
+    </div>
+
+    <div class="guide-card">
+      <h3>⚡ Commandes disponibles</h3>
+      <ul>
+        <li><span class="cmd-box">/daily</span> — scan Gmail + nouvelles offres</li>
+        <li><span class="cmd-box">/log</span> — journaliser un échange en langage naturel</li>
+        <li><span class="cmd-box">/briefing</span> — bilan hebdo + plan de semaine</li>
+        <li><span class="cmd-box">/relances</span> — messages de relance prêts à copier</li>
+        <li><span class="cmd-box">/ajouter</span> — ajouter une candidature manuellement</li>
+        <li><span class="cmd-box">/update</span> — mettre à jour une candidature</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="guide-rules">
+    <h3>Règles absolues à ne jamais oublier</h3>
+    <ul>
+      <li>Jamais d'envoi automatique — Claude prépare, toi tu envoies</li>
+      <li>Chaque échange LinkedIn → <span class="cmd-box">/log</span> dans la foulée pour mettre à jour le compteur de silence</li>
+      <li>Qualité > volume — 5 candidatures ciblées par semaine max, pas 50</li>
+      <li>Silence > 21 jours sans entretien → archiver, pas s'illusionner</li>
+      <li>Silence > 60 jours après entretien → message de clôture automatique</li>
+    </ul>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Modal confirmation LinkedIn -->
+<div id="lk-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:28px 32px;width:380px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+    <div style="font-weight:700;font-size:1.05rem;margin-bottom:6px">💼 Confirmer l'envoi</div>
+    <div style="font-size:0.83rem;color:#64748b;margin-bottom:16px" id="lk-modal-subtitle"></div>
+    <label style="font-size:0.82rem;font-weight:600;display:block;margin-bottom:6px">Entreprise</label>
+    <input id="lk-modal-entreprise" type="text" placeholder="Ex: Reboot Conseil"
+      style="width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:0.9rem;outline:none;margin-bottom:18px"
+      onkeydown="if(event.key==='Enter') lkModalConfirmer()">
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button onclick="lkModalFermer()" style="padding:8px 18px;border-radius:8px;border:1px solid #e2e8f0;background:#f8fafc;font-size:0.82rem;cursor:pointer">Annuler</button>
+      <button onclick="lkModalConfirmer()" style="padding:8px 18px;border-radius:8px;border:none;background:#6366f1;color:#fff;font-size:0.82rem;font-weight:600;cursor:pointer">✅ Confirmer l'envoi</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Init ──────────────────────────────────────────────────────────────────
+
+document.getElementById("today-date").textContent = new Date().toLocaleDateString("fr-FR", {
+  weekday:"long", day:"numeric", month:"long", year:"numeric"
+});
+
+// ── Navigation ────────────────────────────────────────────────────────────
+
+function goTab(id, el) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("page-" + id).classList.add("active");
+  el.classList.add("active");
+  if (id === "offres") chargerOffres();
+  if (id === "pipeline") chargerPipeline();
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────
+
+function esc(s) {
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function toast(msg, type="ok") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = type;
+  t.style.display = "block";
+  setTimeout(() => t.style.display = "none", 3000);
+}
+
+function sourcIcon(src) {
+  if (!src) return "";
+  const s = src.toLowerCase();
+  if (s.includes("linkedin")) return "💼";
+  if (s.includes("gmail") || s.includes("email") || s.includes("mail")) return "📧";
+  if (s.includes("hellowork") || s.includes("hello work")) return "🟡";
+  if (s.includes("wttj") || s.includes("welcome")) return "🟣";
+  if (s.includes("indeed")) return "🔵";
+  if (s.includes("france travail") || s.includes("pole emploi")) return "🇫🇷";
+  return "🔗";
+}
+
+function silencePill(j) {
+  if (j === null || j === undefined) return `<span class="silence-pill none">—</span>`;
+  if (j < 7) return `<span class="silence-pill ok">${j}j</span>`;
+  if (j < 21) return `<span class="silence-pill warn">${j}j</span>`;
+  return `<span class="silence-pill danger">${j}j ⚠️</span>`;
+}
+
+const STATUS_META = {
+  "En cours":        { dot:"#3b82f6", badge:"blue" },
+  "Entretien prévu": { dot:"#8b5cf6", badge:"purple" },
+  "Offre":           { dot:"#22c55e", badge:"green" },
+  "Refus":           { dot:"#ef4444", badge:"red" },
+  "Pas de réponse":  { dot:"#94a3b8", badge:"gray" },
+  "Pas d'opportunités": { dot:"#94a3b8", badge:"gray" },
+  "Abandonnée":      { dot:"#cbd5e1", badge:"gray" },
+};
+
+// ── Dashboard ─────────────────────────────────────────────────────────────
+
+async function chargerDashboard() {
+  const r = await fetch("/api/dashboard");
+  const data = await r.json();
+  const s = data.stats;
+
+  document.getElementById("s-actifs").textContent = s.actifs;
+  document.getElementById("s-haute").textContent = s.haute;
+  document.getElementById("s-entretiens").textContent = s.entretiens;
+  document.getElementById("s-archives").textContent = s.archives;
+
+  const critiques = data.relances.filter(r => r.urgence === "CRITIQUE");
+  document.getElementById("s-critiques").textContent = critiques.length;
+  document.getElementById("relances-count").textContent = data.relances.length + " relance(s)";
+
+  const list = document.getElementById("relances-list");
+
+  if (data.relances.length === 0) {
+    list.innerHTML = '<div class="empty">✅ Aucune relance aujourd\'hui — bien joué !</div>';
+    return;
+  }
+
+  list.innerHTML = data.relances.map(rel => {
+    const cls = rel.cloture ? "cloture" : rel.urgence.toLowerCase();
+    let badgeHtml;
+    if (rel.cloture) badgeHtml = `<span class="badge purple">⚠️ Clôture</span>`;
+    else if (rel.urgence === "CRITIQUE") badgeHtml = `<span class="badge red">🔴 Critique</span>`;
+    else if (rel.urgence === "IMPORTANTE") badgeHtml = `<span class="badge orange">🟡 Importante</span>`;
+    else badgeHtml = `<span class="badge gray">⚪ Standard</span>`;
+
+    return `
+      <div class="relance-card ${cls}">
+        <div class="card-row">
+          <div>
+            <div class="card-name">${esc(rel.entreprise)}</div>
+            <div class="card-meta">${esc(rel.contact||"Sans contact")} · ${rel.jours}j de silence · ${esc(rel.poste||"poste non précisé")}</div>
+            ${rel.source ? `<span class="pill src" style="margin-top:4px;display:inline-flex">${sourcIcon(rel.source)} ${esc(rel.source)}</span>` : ""}
+          </div>
+          ${badgeHtml}
+        </div>
+        <button class="msg-toggle" onclick="toggleMsg(this)">Voir le message →</button>
+        <div class="msg-box">
+          <button class="copy-btn" onclick="copierMsg(this)">Copier</button>${esc(rel.message)}
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function toggleMsg(btn) {
+  const box = btn.nextElementSibling;
+  box.classList.toggle("open");
+  btn.textContent = box.classList.contains("open") ? "Masquer ↑" : "Voir le message →";
+}
+
+function copierMsg(btn) {
+  const txt = btn.parentElement.textContent.replace("Copier","").trim();
+  navigator.clipboard.writeText(txt).then(() => {
+    btn.textContent = "✓ Copié !";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copier"; btn.classList.remove("copied"); }, 2000);
+  });
+}
+
+// ── Analyser emails ───────────────────────────────────────────────────────
+
+async function analyserEmails() {
+  const texte = document.getElementById("email-input").value.trim();
+  if (!texte) return;
+  const btn = document.getElementById("btn-analyser");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Analyse…';
+
+  const r = await fetch("/api/analyser", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({texte})
+  });
+  const data = await r.json();
+  btn.disabled = false; btn.textContent = "Analyser";
+  afficherAnalyse(data.resultats || []);
+}
+
+function afficherAnalyse(res) {
+  const zone = document.getElementById("analyse-resultats");
+  if (!res.length) {
+    zone.innerHTML = '<div class="empty" style="margin-top:12px">Aucun signal détecté.</div>';
+    return;
+  }
+
+  const icons = {refus:"❌",entretien:"⭐",pas_opport:"🚫",accuse:"⏭️",inconnu:"❓"};
+  const labels = {
+    refus:"Refus détecté → statut Refus",
+    entretien:"⭐ Invitation entretien — priorité haute !",
+    pas_opport:"Pas d'opportunités → archiver",
+    accuse:"Accusé réception automatique — ignoré",
+    inconnu:"Signal non identifié",
+  };
+
+  let html = '<div style="margin-top:16px">';
+  res.forEach((r, i) => {
+    const ignore = r.ignorer || r.signal === "inconnu";
+    html += `
+      <div class="analyse-item ${r.signal} ${ignore?"ignore":""}">
+        <div class="analyse-icon">${icons[r.signal]||"❓"}</div>
+        <div class="analyse-body">
+          <div class="analyse-ent">${esc(r.entreprise||"Entreprise non identifiée")}</div>
+          <div class="analyse-txt">${esc((r.texte||"").substring(0,120))}…</div>
+          <div class="analyse-action">${esc(labels[r.signal]||"")}</div>
+          ${(!ignore && r.entreprise && r.statut_propose) ? `
+            <label class="analyse-check">
+              <input type="checkbox" checked data-idx="${i}"
+                data-entreprise="${esc(r.entreprise)}"
+                data-statut="${esc(r.statut_propose||"")}"
+                data-commentaire="${esc(r.commentaire_propose||"")}">
+              Appliquer cette mise à jour dans l'Excel
+            </label>` : ""}
+        </div>
+      </div>`;
+  });
+
+  const hasUpdates = res.some(r => !r.ignorer && r.entreprise && r.statut_propose);
+  if (hasUpdates) html += `<button class="btn-appliquer" onclick="appliquerUpdates()">✅ Appliquer les updates cochés</button>`;
+  html += "</div>";
+  zone.innerHTML = html;
+}
+
+async function appliquerUpdates() {
+  const cases = document.querySelectorAll("#analyse-resultats input[type=checkbox]:checked");
+  const updates = Array.from(cases).map(cb => ({
+    entreprise: cb.dataset.entreprise,
+    statut: cb.dataset.statut||null,
+    commentaire: cb.dataset.commentaire||null,
+  })).filter(u => u.entreprise);
+  if (!updates.length) return;
+
+  const r = await fetch("/api/appliquer", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({updates})
+  });
+  const data = await r.json();
+  const ok = data.resultats.filter(r=>r.ok).length;
+  toast(`✅ ${ok} update(s) appliqué(s)`);
+  chargerDashboard();
+}
+
+// ── Offres ────────────────────────────────────────────────────────────────
+
+let offreTabActif = "a_postuler";
+
+function switchOffreTab(s, el) {
+  offreTabActif = s;
+  document.querySelectorAll("#page-offres .ptab").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+  chargerOffres();
+}
+
+async function chargerOffres() {
+  const r = await fetch(`/api/offres?statut=${offreTabActif}`);
+  const data = await r.json();
+  const st = data.stats;
+
+  document.getElementById("o-ap").textContent = st.a_postuler;
+  document.getElementById("o-p").textContent = st.postule;
+  document.getElementById("o-i").textContent = st.ignore;
+  document.getElementById("nb-offres").textContent = st.a_postuler;
+
+  const offres = data.offres;
+
+  const list = document.getElementById("offres-list");
+  const msgs = {
+    a_postuler: "✅ Aucune offre en attente — lance <strong>/daily</strong> dans Claude Code pour en ajouter.",
+    postule: "Aucune offre marquée comme postulée encore.",
+    ignore: "Aucune offre ignorée.",
+  };
+
+  if (!offres.length) {
+    list.innerHTML = `<div class="empty">${msgs[offreTabActif]||""}</div>`;
+    return;
+  }
+
+  const today = new Date().toISOString().slice(0,10);
+  list.innerHTML = offres.map(o => {
+    const score = o.score||0;
+    const ring = score>=70?"haut":score>=50?"moyen":"bas";
+    const isNew = o.date_ajout === today;
+    const d = o.detail_score||{};
+    const stack = (o.stack||[]).slice(0,5).join(", ");
+
+    return `
+      <div class="offre-card" id="offre-${o.id}">
+        <div class="offre-top">
+          <div>
+            ${isNew ? '<span class="pill new" style="margin-bottom:6px;display:inline-flex">✨ Nouveau aujourd\'hui</span><br>' : ""}
+            <div class="offre-name">${esc(o.entreprise)}</div>
+            <div class="offre-poste">${esc(o.poste||"Poste non précisé")}</div>
+          </div>
+          <div class="score-ring ${ring}">
+            ${score}
+            <span class="score-lbl">/100</span>
+          </div>
+        </div>
+
+        <div class="offre-pills">
+          ${o.localisation?`<span class="pill loc">📍 ${esc(o.localisation)}</span>`:""}
+          ${o.contrat?`<span class="pill cdi">${esc(o.contrat)}</span>`:""}
+          ${o.source?`<span class="pill src">${esc(o.source)}</span>`:""}
+          ${o.contact?`<span class="pill contact">👤 ${esc(o.contact)}</span>`:""}
+          ${stack?`<span class="pill stack">⚙️ ${esc(stack)}</span>`:""}
+        </div>
+
+        <div class="score-detail">
+          Stack ${d.stack||0}/50 · Localisation ${d.localisation||0}/30 · Contrat ${d.contrat||0}/10 · Qualité ${d.qualite||0}/10
+        </div>
+
+        ${offreTabActif==="a_postuler" ? `
+        <div class="offre-actions">
+          <button class="btn btn-green" onclick="marquerOffre('${o.id}','postule',this)">✓ J'ai postulé</button>
+          <button class="btn btn-ghost" onclick="marquerOffre('${o.id}','ignore',this)">Ignorer</button>
+          ${o.url?`<a class="btn btn-link" href="${esc(o.url)}" target="_blank">Voir l'offre ↗</a>`:""}
+        </div>` : `
+        <div style="font-size:.75rem;color:var(--text3)">
+          ${o.statut==="postule"?"✓ Postulé le ":"Ignorée le "}${o.date_action||o.date_ajout}
+        </div>`}
+
+        <div style="font-size:.7rem;color:var(--text3);margin-top:8px">Ajoutée le ${o.date_ajout}</div>
+      </div>`;
+  }).join("");
+}
+
+async function marquerOffre(id, statut, btn) {
+  btn.disabled = true;
+  const r = await fetch("/api/offres/marquer", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({id, statut})
+  });
+  const data = await r.json();
+  if (data.ok) {
+    const card = document.getElementById("offre-"+id);
+    card.classList.add("sortant");
+    setTimeout(chargerOffres, 300);
+    toast(statut==="postule" ? "✓ Marqué comme postulé !" : "Offre ignorée");
+  }
+}
+
+// ── Pipeline ──────────────────────────────────────────────────────────────
+
+let pipelineTabActif = "actifs";
+let pipelineData = [];
+
+function switchPipelineTab(s, el) {
+  pipelineTabActif = s;
+  document.querySelectorAll("#page-pipeline .ptab").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+  afficherPipeline();
+}
+
+async function chargerPipeline() {
+  document.getElementById("pipeline-list").innerHTML = '<div class="empty">Chargement…</div>';
+  const r = await fetch("/api/pipeline");
+  const data = await r.json();
+  pipelineData = data.candidatures;
+  afficherPipeline();
+}
+
+function afficherPipeline() {
+  const ACTIFS = ["1er contact","En cours","Entretien prévu","Offre"];
+  const ENTRETIEN = ["Entretien prévu"];
+  const ARCHIVES = ["Refus","Pas de réponse","Pas d'opportunités","Abandonnée"];
+
+  let cands = pipelineData;
+  if (pipelineTabActif === "actifs") cands = cands.filter(c => ACTIFS.includes(c.statut));
+  else if (pipelineTabActif === "entretien") cands = cands.filter(c => c.has_entretien || ENTRETIEN.includes(c.statut));
+  else if (pipelineTabActif === "archives") cands = cands.filter(c => ARCHIVES.includes(c.statut));
+
+  const triChoisi = document.getElementById("pipeline-sort")?.value || "urgence";
+  const ordrePrio = {"Entretien prévu":0, Offre:0, Haute:0, Moyenne:1, Basse:2, Archivée:3};
+  const ordreStatut = {"Entretien prévu":0, Offre:1, "En cours":2, "1er contact":3};
+
+  cands = [...cands].sort((a, b) => {
+    if (triChoisi === "recent") {
+      // Date contact la plus récente d'abord
+      const da = a.date_contact_fmt === "—" ? "" : a.date_contact_fmt;
+      const db = b.date_contact_fmt === "—" ? "" : b.date_contact_fmt;
+      if (da !== db) return db.localeCompare(da);
+      return (b.silence||0) - (a.silence||0);
+    }
+    if (triChoisi === "silence") {
+      // Silence le plus long d'abord
+      return (b.silence||0) - (a.silence||0);
+    }
+    // urgence (défaut) : statut critique > priorité > silence
+    const ds = (ordreStatut[a.statut]??4) - (ordreStatut[b.statut]??4);
+    if (ds !== 0) return ds;
+    const dp = (ordrePrio[a.priorite]||3) - (ordrePrio[b.priorite]||3);
+    if (dp !== 0) return dp;
+    return (b.silence||0) - (a.silence||0);
+  });
+
+  const list = document.getElementById("pipeline-list");
+  if (!cands.length) {
+    list.innerHTML = '<div class="empty">Aucune candidature dans cette catégorie.</div>';
+    return;
+  }
+
+  const meta = s => STATUS_META[s] || {dot:"#94a3b8", badge:"gray"};
+
+  list.innerHTML = cands.map(c => {
+    const m = meta(c.statut);
+    return `
+      <div class="pipeline-card">
+        <div>
+          <div class="pc-name">
+            <span class="status-dot" style="background:${m.dot}"></span>
+            ${esc(c.entreprise)}
+            ${c.has_entretien ? '<span class="badge purple" style="font-size:.65rem;padding:2px 7px;margin-left:6px">Entretien</span>' : ""}
+          </div>
+          <div class="pc-sub">
+            ${esc(c.poste||"—")} · ${esc(c.localisation||"—")}
+            ${c.contact ? ` · 👤 ${esc(c.contact.split("/")[0].trim())}` : ""}
+            ${c.source ? ` &nbsp;<span class="pill src" style="font-size:.65rem;padding:2px 8px">${sourcIcon(c.source)} ${esc(c.source)}</span>` : ""}
+          </div>
+        </div>
+        <div class="pc-right">
+          ${silencePill(c.silence)}
+          <span class="badge ${m.badge}">${esc(c.statut)}</span>
+          <span style="font-size:.72rem;color:var(--text3);min-width:60px;text-align:right">${c.date_contact_fmt}</span>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// ── Upload ────────────────────────────────────────────────────────────────
+
+async function uploadExcel(input) {
+  const f = input.files[0]; if (!f) return;
+  const status = document.getElementById("upload-status");
+  status.style.display = "block"; status.className = "upload-status";
+  status.textContent = "Upload en cours…";
+  const form = new FormData(); form.append("fichier", f);
+  const r = await fetch("/api/upload-excel", {method:"POST", body:form});
+  const data = await r.json();
+  if (data.ok) {
+    status.className = "upload-status ok";
+    status.textContent = `✅ Fichier mis à jour — ${data.nb_candidatures} candidatures chargées`;
+    chargerDashboard();
+  } else {
+    status.className = "upload-status err";
+    status.textContent = "❌ " + (data.error||"Erreur inconnue");
+  }
+}
+
+// ── LinkedIn Messages ────────────────────────────────────────────────────
+
+const LINKEDIN_TPL = `Bonjour {prenom},
+
+Je termine actuellement mon alternance en développement logiciel sur Strasbourg et je suis en recherche d'un CDI développeur.
+
+J'ai vu que {entreprise} recrute des consultants IT sur Strasbourg. Est-ce que vous avez des besoins en développement en ce moment ?
+
+Je peux vous transmettre mon CV avec plaisir.
+
+Bien cordialement,
+Nedjmeddine Djilly`;
+
+function genererMsg(prenom, entreprise) {
+  return LINKEDIN_TPL.replace("{prenom}", prenom).replace("{entreprise}", entreprise);
+}
+
+async function chargerLinkedin() {
+  const r = await fetch("/api/linkedin-messages");
+  const data = await r.json();
+  const list = document.getElementById("linkedin-list");
+  const count = document.getElementById("linkedin-count");
+
+  count.textContent = data.stats.en_attente + " à envoyer";
+
+  if (data.messages.length === 0) {
+    list.innerHTML = '<div class="empty">✅ Aucun message en attente — tout est envoyé !</div>';
+    return;
+  }
+
+  list.innerHTML = data.messages.map(m => {
+    const hasEnt = m.entreprise && m.entreprise.trim();
+    const msg = hasEnt ? esc(genererMsg(m.prenom, m.entreprise)) : null;
+    return `
+    <div class="linkedin-card ${hasEnt ? 'complet' : ''}" id="lk-${m.id}">
+      <div class="card-row">
+        <div>
+          <div class="card-name">💼 ${esc(m.prenom)} ${esc(m.nom)}</div>
+          <div class="card-meta">Connexion acceptée le ${m.date_acceptation}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap">
+            <input class="linkedin-entreprise-input" id="ent-${m.id}"
+              placeholder="Entreprise (ex: Reboot Conseil)"
+              value="${esc(m.entreprise||'')}"
+              onchange="sauvegarderEntreprise('${m.id}', this.value)"
+              oninput="mettreAJourMsg('${m.id}', this.value, '${esc(m.prenom)}')">
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <button class="btn btn-sm btn-green" onclick="marquerLinkedin('${m.id}','envoye')">✅ Envoyé</button>
+          <button class="btn btn-sm btn-gray" onclick="marquerLinkedin('${m.id}','ignore')">Ignorer</button>
+        </div>
+      </div>
+      ${hasEnt ? `
+      <div class="linkedin-msg-box" id="msg-${m.id}">${msg}
+        <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copierMsg(this)">Copier</button>
+      </div>` : `<div style="font-size:.78rem;color:var(--text3);margin-top:8px">👆 Remplis l'entreprise pour générer le message</div>`}
+    </div>`;
+  }).join("");
+}
+
+function mettreAJourMsg(id, entreprise, prenom) {
+  const card = document.getElementById(`lk-${id}`);
+  if (!card) return;
+  const existing = document.getElementById(`msg-${id}`);
+  if (entreprise.trim()) {
+    const msg = esc(genererMsg(prenom, entreprise));
+    if (existing) {
+      existing.innerHTML = msg + `<button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copierMsg(this)">Copier</button>`;
+    } else {
+      const hint = card.querySelector('[style*="Remplis"]');
+      if (hint) hint.outerHTML = `<div class="linkedin-msg-box" id="msg-${id}" style="position:relative">${msg}<button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copierMsg(this)">Copier</button></div>`;
+    }
+    card.classList.add("complet");
+  }
+}
+
+async function sauvegarderEntreprise(id, entreprise) {
+  if (!entreprise.trim()) return;
+  await fetch("/api/linkedin-messages/entreprise", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({id, entreprise})
+  });
+}
+
+let _lkPending = null;
+
+function marquerLinkedin(id, statut) {
+  if (statut === "ignore") {
+    _envoyerLinkedin(id, "ignore", "", "", "");
+    return;
+  }
+  // Récupérer les infos de la carte
+  const entInput = document.getElementById(`ent-${id}`);
+  const card = document.getElementById(`lk-${id}`);
+  const nameEl = card ? card.querySelector(".card-name") : null;
+  const fullName = nameEl ? nameEl.textContent.replace("💼","").trim() : "";
+  const parts = fullName.split(" ");
+  const prenom = parts[0] || "";
+  const nom = parts.slice(1).join(" ") || "";
+  const entrepriseActuelle = entInput ? entInput.value.trim() : "";
+
+  // Ouvrir le modal, pré-rempli si déjà saisi
+  _lkPending = {id, prenom, nom};
+  document.getElementById("lk-modal-subtitle").textContent = `Message envoyé à ${fullName}`;
+  document.getElementById("lk-modal-entreprise").value = entrepriseActuelle;
+  const modal = document.getElementById("lk-modal");
+  modal.style.display = "flex";
+  setTimeout(() => document.getElementById("lk-modal-entreprise").focus(), 50);
+}
+
+function lkModalFermer() {
+  document.getElementById("lk-modal").style.display = "none";
+  _lkPending = null;
+}
+
+async function lkModalConfirmer() {
+  if (!_lkPending) return;
+  const entreprise = document.getElementById("lk-modal-entreprise").value.trim();
+  document.getElementById("lk-modal").style.display = "none";
+  await _envoyerLinkedin(_lkPending.id, "envoye", entreprise, _lkPending.prenom, _lkPending.nom);
+  _lkPending = null;
+}
+
+async function _envoyerLinkedin(id, statut, entreprise, prenom, nom) {
+  const r = await fetch("/api/linkedin-messages/marquer", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({id, statut, entreprise, prenom, nom})
+  });
+  const data = await r.json();
+  const card = document.getElementById(`lk-${id}`);
+  if (card) {
+    card.style.opacity = "0";
+    card.style.transition = "opacity .3s";
+    setTimeout(() => { card.remove(); chargerLinkedin(); }, 300);
+  }
+  if (statut === "envoye") {
+    const excelInfo = data.excel_msg ? ` — ${data.excel_msg}` : "";
+    toast(`✅ Envoyé${entreprise ? " · " + entreprise + " noté dans l'Excel" + excelInfo : ""}`);
+  } else {
+    toast("⏭️ Ignoré");
+  }
+}
+
+// ── Start ─────────────────────────────────────────────────────────────────
+chargerDashboard();
+chargerOffres();
+chargerLinkedin();
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+[
+  {
+    "id": "cb9d913cebd4",
+    "prenom": "Quentin",
+    "nom": "Miceli",
+    "entreprise": "Viveris",
+    "date_acceptation": "2026-04-20",
+    "thread_id": "19dab4fda6153a70",
+    "statut": "envoye",
+    "date_action": "2026-04-21"
+  },
+  {
+    "id": "b51e6e650e4a",
+    "prenom": "Ludivine",
+    "nom": "ACHOURI",
+    "entreprise": "Daveo",
+    "date_acceptation": "2026-04-19",
+    "thread_id": "19da7e109fb5f6ee",
+    "statut": "envoye",
+    "date_action": "2026-04-21"
+  },
+  {
+    "id": "4939bcdcd8fe",
+    "prenom": "Antoine",
+    "nom": "ZANARDI",
+    "entreprise": "Euro-Information",
+    "date_acceptation": "2026-04-17",
+    "thread_id": "19d9b6ef5c014d0e",
+    "statut": "ignore",
+    "date_action": "2026-04-21"
+  },
+  {
+    "id": "e1d5ae345742",
+    "prenom": "Mehdi",
+    "nom": "Bouzoubaa",
+    "entreprise": "Euro-Information",
+    "date_acceptation": "2026-04-16",
+    "thread_id": "19d95dab59315356",
+    "statut": "envoye",
+    "date_action": "2026-04-21"
+  },
+  {
+    "id": "89e8fc9fd910",
+    "prenom": "Wassim",
+    "nom": "KHEDIR",
+    "entreprise": "Amaris Consulting",
+    "date_acceptation": "2026-04-15",
+    "thread_id": "19d904666db18f11",
+    "statut": "envoye",
+    "date_action": "2026-04-21"
+  },
+  {
+    "id": "362183c8b992",
+    "prenom": "Yassin",
+    "nom": "Meghazi",
+    "entreprise": null,
+    "date_acceptation": "2026-04-14",
+    "thread_id": "19d8b8e9c383225d",
+    "statut": "ignore",
+    "date_action": "2026-04-21"
+  },
+  {
+    "id": "1c69fb7e84cc",
+    "prenom": "Faten",
+    "nom": "KSANTINI",
+    "entreprise": "Expleo Group",
+    "date_acceptation": "2026-04-22",
+    "thread_id": null,
+    "statut": "envoye",
+    "date_action": "2026-04-22"
+  },
+  {
+    "id": "2ff66f815d63",
+    "prenom": "Mélanie",
+    "nom": "Yilmaz",
+    "entreprise": "Humanship Partner",
+    "date_acceptation": "2026-04-22",
+    "thread_id": null,
+    "statut": "envoye",
+    "date_action": "2026-04-22"
+  },
+  {
+    "id": "2d118ebe0573",
+    "prenom": "Damien",
+    "nom": "Campens",
+    "entreprise": null,
+    "date_acceptation": "2026-04-22",
+    "thread_id": null,
+    "statut": "ignore",
+    "date_action": "2026-04-22"
+  },
+  {
+    "id": "8e7dba214977",
+    "prenom": "Badr",
+    "nom": "Matrane",
+    "entreprise": "mca",
+    "date_acceptation": "2026-04-22",
+    "thread_id": null,
+    "statut": "envoye",
+    "date_action": "2026-04-22"
+  },
+  {
+    "id": "9b5d40a12507",
+    "prenom": "Rémi",
+    "nom": "De Buyser",
+    "entreprise": "mca",
+    "date_acceptation": "2026-04-22",
+    "thread_id": null,
+    "statut": "envoye",
+    "date_action": "2026-04-22"
+  },
+  {
+    "id": "5c4c141ef597",
+    "prenom": "Jean-François",
+    "nom": "Razafinjatovo",
+    "entreprise": "Humanship Partner",
+    "date_acceptation": "2026-04-22",
+    "thread_id": null,
+    "statut": "envoye",
+    "date_action": "2026-04-22"
+  },
+  {
+    "id": "c7f9efbc746e",
+    "prenom": "Déborah",
+    "nom": "GIOT",
+    "entreprise": "Astek",
+    "date_acceptation": "2026-04-22",
+    "thread_id": null,
+    "statut": "envoye",
+    "date_action": "2026-04-22"
+  }
+]
