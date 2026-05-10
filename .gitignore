@@ -1,0 +1,7 @@
+.env
+*.pyc
+__pycache__/
+suivi_backup_*.xlsx
+exports/daily_*.md
+exports/log_*.md
+exports/opportunites_*.md

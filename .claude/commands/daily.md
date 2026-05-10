@@ -27,7 +27,7 @@ Effectue ces recherches Gmail via les outils MCP (en parallèle si possible). Ut
 
 **Recherche 1 — Réponses de recruteurs :**
 ```
-query: "newer_than:Xd (sujet:candidature OR sujet:développeur OR sujet:opportunité OR sujet:poste OR sujet:recrutement OR sujet:entretien) -from:noreply -from:no-reply"
+query: "newer_than:Xd (sujet:candidature OR sujet:développeur OR sujet:opportunité OR sujet:poste OR sujet:recrutement OR sujet:entretien OR sujet:analyste) -from:noreply -from:no-reply"
 ```
 
 **Recherche 2 — Emails LinkedIn :**
@@ -86,11 +86,25 @@ Si une entreprise mentionnée dans un email **n'est pas dans le suivi**, note-la
 
 Détecte dans les emails LinkedIn les notifications du type **"X a accepté votre invitation"** ou **"X a accepté votre demande de connexion"**.
 
+**⚠️ RÈGLE ABSOLUE : sauvegarder IMMÉDIATEMENT dans le store, SANS attendre l'entreprise.**
+
 Pour chaque acceptation trouvée :
-1. Extrait le prénom, le nom et l'entreprise de la personne
-2. **Si l'entreprise est inconnue** (les emails LinkedIn ne la donnent pas) → liste le nom et demande à Nedjmeddine l'entreprise avant de générer le message
-3. Vérifie si l'entreprise est déjà dans le suivi Excel (via `python3 scripts/lib_excel.py` si besoin)
-4. Génère un message personnalisé basé sur ce template :
+1. Extrait le prénom, le nom et le thread_id
+2. **Sauvegarde immédiatement** dans le store via ce script Python (entreprise = null si inconnue) :
+```python
+python3 -c "
+import sys; sys.path.insert(0, 'scripts')
+from linkedin_store import ajouter_connexions
+res = ajouter_connexions([
+  {'prenom': 'Prénom', 'nom': 'Nom', 'entreprise': None, 'date_acceptation': 'YYYY-MM-DD', 'thread_id': 'THREAD_ID'},
+  # ... une entrée par connexion
+])
+print(res)
+"
+```
+3. **Après** la sauvegarde, demande à Nedjmeddine les entreprises pour les connexions sans entreprise (pour générer les messages)
+4. Vérifie si l'entreprise est déjà dans le suivi Excel (via `python3 scripts/lib_excel.py` si besoin)
+5. Génère un message personnalisé basé sur ce template :
 
 ```
 Bonjour [Prénom],

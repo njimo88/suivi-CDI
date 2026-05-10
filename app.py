@@ -22,6 +22,7 @@ from lib_excel import (
 )
 from relances import construire_relances, generer_message
 from offres_store import ajouter_offres, marquer, lister, stats as offres_stats, get_offre
+from fetch_offres_ft import fetch_and_score as ft_fetch_and_score
 from linkedin_store import (
     lister as linkedin_lister, marquer as linkedin_marquer,
     mettre_a_jour_entreprise, stats as linkedin_stats
@@ -165,6 +166,30 @@ def api_dashboard():
     return jsonify({"stats": stats, "relances": relances})
 
 
+@app.route("/api/relances/action", methods=["POST"])
+def api_relances_action():
+    data = request.get_json()
+    entreprise = (data.get("entreprise") or "").strip()
+    action = data.get("action", "")
+    if not entreprise or action not in ("relance_envoyee", "pas_opportunites"):
+        return jsonify({"ok": False, "msg": "Paramètres invalides"}), 400
+
+    today = date.today()
+    if action == "relance_envoyee":
+        ok, msg = update_programmatic(
+            entreprise_or_id=entreprise,
+            commentaire=f"Relance envoyée le {today.strftime('%d/%m')}",
+            date_contact=today,
+        )
+    else:
+        ok, msg = update_programmatic(
+            entreprise_or_id=entreprise,
+            statut="Pas d'opportunités",
+            date_contact=today,
+        )
+    return jsonify({"ok": ok, "msg": msg})
+
+
 @app.route("/api/analyser", methods=["POST"])
 def api_analyser():
     """Analyse le texte collé (emails LinkedIn/Gmail)."""
@@ -263,6 +288,25 @@ def api_offres_marquer():
             excel_result = {"ok": ok_excel, "msg": msg_excel, "id": new_id}
 
     return jsonify({"ok": ok, "excel": excel_result})
+
+
+@app.route("/api/offres/scan-ft", methods=["POST"])
+def api_scan_ft():
+    """Lance un scan France Travail sur le dernier mois et ajoute les offres qualifiées."""
+    data = request.get_json() or {}
+    jours = int(data.get("jours", 31))
+    jours = max(1, min(jours, 31))
+
+    result = ft_fetch_and_score(jours)
+
+    if "error" in result:
+        code = result["error"]
+        if code == "credentials_missing":
+            return jsonify({"ok": False, "error": "credentials_missing",
+                            "message": result["message"]}), 200
+        return jsonify({"ok": False, "error": code, "message": result.get("message", "")}), 500
+
+    return jsonify({"ok": True, **result})
 
 
 @app.route("/api/upload-excel", methods=["POST"])

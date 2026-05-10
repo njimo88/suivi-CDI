@@ -138,7 +138,26 @@ def main():
     chemin = exporter_log(today, texte_original, entrees_resultats)
     ok_count = sum(1 for e in entrees_resultats if e.get("_ok"))
     print(f"\n✅ {ok_count} update(s) appliqué(s) sur {len(entrees_resultats)}")
-    print(f"📄 Export : {chemin}")
+
+    ok_entries = [e for e in entrees_resultats if e.get("_ok")]
+    if ok_entries:
+        print("\n📋 Résumé des modifications :")
+        for e in ok_entries:
+            ligne = f"  • {e['entreprise']}"
+            if e.get("statut"):
+                ligne += f" → {e['statut']}"
+            else:
+                ligne += " → commentaire ajouté"
+            if e.get("date_contact"):
+                try:
+                    from datetime import datetime as _dt
+                    d = _dt.strptime(e["date_contact"], "%Y-%m-%d").strftime("%d/%m")
+                    ligne += f" ({d})"
+                except Exception:
+                    pass
+            print(ligne)
+
+    print(f"\n📄 Export : {chemin}")
 
 
 if __name__ == "__main__":

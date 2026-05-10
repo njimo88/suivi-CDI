@@ -16,6 +16,22 @@ Outil de pilotage de recherche d'emploi. **Pas un outil d'automatisation massive
 4. **Toujours tracker avant de proposer.** Avant de suggérer une nouvelle candidature, vérifier dans l'Excel que l'entreprise n'y figure pas déjà (anti-doublon strict).
 5. **Ton direct, sans complaisance.** Si Nedjmeddine traîne sur une relance, lui dire. Si une candidature est morte (>21 jours sans réponse), l'archiver, pas la maintenir en espoir.
 
+### Pour le design / UI
+1. Si l'utilisateur fournit une image de référence (screenshot, mockup, wireframe) :
+   - Génère le composant avec Tailwind CSS
+   - Screenshot la page rendue avec Puppeteer (`npx puppeteer screenshot [url] --fullpage`)
+   - Compare le screenshot avec la référence — vérifie :
+     - Spacing et padding (en px)
+     - Tailles de police, poids, line-height
+     - Couleurs (hex exact)
+     - Alignement et positionnement
+     - Border radius, ombres
+     - Rendu mobile
+   - Corrige chaque écart trouvé
+   - Re-screenshot et compare à nouveau
+   - Répète jusqu'à < 3px d'écart partout
+   - Minimum 2 passes de comparaison. Ne t'arrête pas après un seul tour.
+   
 ## Structure des données
 
 Le fichier `suivi.xlsx` contient 3 feuilles :

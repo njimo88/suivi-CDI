@@ -122,5 +122,215 @@
     "statut": "postule",
     "date_ajout": "2026-04-21",
     "date_action": "2026-04-21"
+  },
+  {
+    "entreprise": "QWADRAN",
+    "poste": "Développeur Fullstack Microsoft (C#/.NET/Angular)",
+    "localisation": "Schiltigheim (67)",
+    "contrat": "CDI",
+    "stack": [
+      "C#",
+      ".NET",
+      "Angular",
+      "ReactJS",
+      "VueJS",
+      "DevOps"
+    ],
+    "contact": "",
+    "url": "https://to.indeed.com/aar79ppqzzcn",
+    "description": "Concevoir et développer des applications full stack robustes (C#, .NET, Angular). Intégrer des pratiques DevOps. Rédiger des spécifications techniques. Réaliser des tests d'intégration, tests unitaires, qualimétrie de code. Profil : 5 ans d'expérience full stack C#/.NET/Angular/ReactJS ou VueJS. Travail hybride depuis Schiltigheim. Salaire à partir de 35 000€/an. RTT, transports pris en charge 75%.",
+    "source": "Indeed",
+    "score": 62,
+    "detail_score": {
+      "stack": 22,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 0
+    },
+    "id": "cdc678360b3e",
+    "statut": "postule",
+    "date_ajout": "2026-04-24",
+    "date_action": "2026-04-25"
+  },
+  {
+    "entreprise": "Soprofen",
+    "poste": "Développeur Applicatif – ERP Infor M3 / .NET / JavaScript",
+    "localisation": "Mertzwiller (67)",
+    "contrat": "CDI",
+    "stack": [
+      ".NET",
+      "SQL Server",
+      "JavaScript",
+      "React",
+      "ETL"
+    ],
+    "contact": "",
+    "url": "https://to.indeed.com/aawbqm9mvh2k",
+    "description": "Développer, maintenir et faire évoluer des applications liées à l'ERP Infor M3. Réaliser des évolutions fonctionnelles et correctifs applicatifs en environnement de production. Participer au support applicatif de niveau expert. Contribuer aux projets structurants. Environnement technique : ERP Infor M3, .NET, SQL Server, ETL/intégration de données, JavaScript/React. Salaire 33 000 à 35 000€/an. Poste en présentiel à Mertzwiller. Avantages : flextime, intéressement, participation, restaurant d'entreprise.",
+    "source": "Indeed",
+    "score": 62,
+    "detail_score": {
+      "stack": 17,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 5
+    },
+    "id": "1590a5951abc",
+    "statut": "postule",
+    "date_ajout": "2026-04-24",
+    "date_action": "2026-04-25"
+  },
+  {
+    "entreprise": "SOCIETE POUR L'INFORMATIQUE INDUSTRIELLE",
+    "poste": "Développeur .NET / C# Fullstack (H/F)",
+    "localisation": "67 - STRASBOURG (67)",
+    "contrat": "CDI",
+    "stack": [
+      "Angular",
+      "React",
+      "VueJS",
+      ".NET",
+      "C#",
+      "ASP.NET",
+      "JavaScript",
+      "TypeScript",
+      "Java"
+    ],
+    "contact": "SOCIETE POUR L'INFORMATIQUE INDUSTRIELLE - Mme Sophia ABRIKOUS",
+    "url": "https://candidat.francetravail.fr/offres/recherche/detail/206THSK",
+    "description": "Rejoins l'aventure SII Est à Strasbourg !\nTu es passionné(e) par le développement logiciel et tu veux évoluer dans un environnement où l'humain est au cœur des priorités ?\nChez SII Est, à Strasbourg, nous te proposons bien plus qu'un simple poste : une expérience professionnelle enrichissante, dans une entreprise engagée, innovante et conviviale.\n\nPourquoi nous rejoindre ?\nParce que chez SII, nous croyons qu'un cadre de travail épanouissant est essentiel.\nLabellisés Great Place To Work depuis plusieurs années, nous mettons un point d'honneur à valoriser la bienveillance, l'esprit d'équipe et l'inclusion.\nNous sommes également engagés pour l'égalité des chances et la diversité, notamment à travers notre soutien actif aux causes LGBT+ et à l'accueil des personnes en situation de handicap\n\nCe que tu feras\nEn tant que Développeur .NET C# Fullstack F/H, tu participeras à la conception et à l'évolution de solutions informatiques destinées à optimiser la gestion de sites pour un client du secteur retail.\nTu travailleras au sein d'une équipe projet dynamique, en lien direct avec les équipes mé-tiers.\n\nTes missions comprendront :\n- Recueillir l'expression des besoins auprès des Maîtrises d'ouvrage\n- Participer au développement d'applications\n- Élaborer la conception technique et fonctionnelle\n- Rédiger les spécifications techniques\n- Effectuer un reporting d'avancement auprès des responsables techniques\n- Accompagner et former les utilisateurs finaux\n\nTon profil\nTu es titulaire d'un Bac+5 minimum en informatique, avec une expérience significative en développement .NET et C#.\nTu maîtrises les environnements suivants :\n- Back-end : C#, ASP.NET (Core), MVC\n- Front-end : JavaScript, TypeScript, Angular, React, VueJS\nTu es rigoureux(se), organisé(e), autonome, et tu apprécies le travail en équipe.\nTu es aussi à l'aise sur les aspects fonctionnels que techniques ? Alors ce poste est fait pour toi !\n\nCe que nous t'offrons\nChez SII Est, tu bénéficieras :\n- d'un accompagnement person",
+    "source": "France Travail",
+    "score": 84,
+    "detail_score": {
+      "stack": 34,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 10
+    },
+    "id": "502a4e6bf337",
+    "statut": "postule",
+    "date_ajout": "2026-04-25",
+    "date_action": "2026-04-25"
+  },
+  {
+    "entreprise": "EASTELSON",
+    "poste": "Développeur Ruby On Rails confirmé (H/F)",
+    "localisation": "67 - STRASBOURG (67)",
+    "contrat": "CDI",
+    "stack": [
+      "REST",
+      "API"
+    ],
+    "contact": "",
+    "url": "https://candidat.francetravail.fr/offres/recherche/detail/206MSYR",
+    "description": "Nous recrutons des développeurs Ruby confirmés pour monter une équipe de consultants passionnés dans le domaine bancaire et du e-commerce.\n\nEn tant que développeur Ruby On Rails, vos missions seront les suivantes :\n\n- Concevoir et développer des applications en Ruby on Rails\n- Participer aux choix d'architecture technique\n- Implémenter des API REST et services backend\n- Garantir la qualité du code (tests, revues)\n- Optimiser les performances et la sécurité des applications\n- Contribuer à l'amélioration continue des pratiques de développement\n\nProfil recherché\n- Formation initiale dans l'informatique (à partir de BAC+3)\n- Minimum 3 ans d'expérience en développement Ruby\n- Autonomie, capacité à travailler en équipe, curiosité et force de proposition\n\nAutres avantages : \nRTT, CE, abonnement sportif Wellpass, possibles primes de cooptation et d'apport d'affaires, plateforme de formation interne, afterworks mensuels\n\n",
+    "source": "France Travail",
+    "score": 50,
+    "detail_score": {
+      "stack": 5,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 5
+    },
+    "id": "40a253eb8dd4",
+    "statut": "postule",
+    "date_ajout": "2026-04-25",
+    "date_action": "2026-04-25"
+  },
+  {
+    "entreprise": "TIR TECHNOLOGIES TOILES INDUS RHIN TECHN",
+    "poste": "Analyste-programmeur / Analyste-programmeuse informatique (H/F)",
+    "localisation": "67 - KILSTETT (67)",
+    "contrat": "CDI",
+    "stack": [
+      "SQL Server"
+    ],
+    "contact": "",
+    "url": "https://candidat.francetravail.fr/offres/recherche/detail/206JKLL",
+    "description": "Rattaché(e) au responsable des systèmes d'information.\nDans ce contexte et dans le cadre de vos missions vous :\n- Participez à la rédaction des cahiers des charges,\n- Concevez, développez et optimisez des applications informatiques en réponse aux cahiers\ndes charges validés par les directions métiers et en assurer la maintenance,\n- Participez à la mise en place de l'ERP de l'entreprise\n- Intégrez au système d'information de l'entreprise des progiciels métiers acquis auprès\nd'éditeurs spécialisés (élaboration d'interfaces),\n- Réalisez des tests techniques,\n- Mettez en oeuvre les environnements des tests fonctionnels,\n- Rédigez les guides utilisateurs et les documents techniques.\n\nProfil souhaité :\nDiplômé d'une BAC+2 minimum en informatique\nMaîtrise des bases de données relationnelles SQL\nEnvironnement technique : plate-forme Windows\nSGBD : SQL Server\nMaitrise langage de programmation : SQL, Windev / Webdev\n\nVous avez une bonne capacité à communiquer. Vous faites preuve de patience, d'écoute et de\ncourtoisie auprès de vos interlocuteurs et de vos collègues.\n\nQualité : dynamique, organisé, vous appréciez le travail en équipe et les projets partagés\n\nVous serez amené(e) à effectuer des déplacements très ponctuels.",
+    "source": "France Travail",
+    "score": 50,
+    "detail_score": {
+      "stack": 5,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 5
+    },
+    "id": "f7217f6ca0ef",
+    "statut": "postule",
+    "date_ajout": "2026-04-25",
+    "date_action": "2026-04-27"
+  },
+  {
+    "entreprise": "UCANSS",
+    "poste": "Chargé(e) d'Affaires - CDI (H/F)",
+    "localisation": "67 - Illkirch-Graffenstaden (67)",
+    "contrat": "CDI",
+    "stack": [
+      "REST"
+    ],
+    "contact": "",
+    "url": "https://candidat.francetravail.fr/offres/recherche/detail/1715572",
+    "description": "Contexte\n\nLe CTI Strasbourg, a pour mission d'assurer le maintien en condition opérationnelle du système d'information de l'Assurance Maladie en France. Il héberge, dans un environnement Datacenter sur 2 sites géographiques et 4 salles informatiques, les infrastructures matérielles exploitées par les centres de service métier.\n\n * Au service de 60 millions de bénéficiaires\n * Plus de 180 milliards d'euro de prestations maladie par an\n * 86000 collaborateurs en France répartis dans 168 organismes\n\nVous-avez envie de rejoindre une entreprise bienveillante et disposant des valeurs telles que : Se respecter, Être professionnel, Être solidaire, Se faire confiance et Innover.\n\nNous Vous attendons !\n\nDescriptif du poste \n\nLe poste est positionné au sein du service Relation de Service et Performances. Vous travaillerez en étroite collaboration avec les équipes internes et également avec différents acteurs de la Direction Déléguée au Système d'Information de la Caisse Nationale d'Assurance Maladie. \n\nVous participez activement à la gestion des changements et à la diffusion de l'information entre les acteurs.\n\nVous avez un rôle clé à mener dans la relation de service entre le datacenter de production de l'Assurance Maladie et ses clients.\n\nVous apportez également du conseil dans les processus nationaux aux différentes entités de l'organisation.\n\nEnfin, vous serez amené à piloter des projets informatiques.\n\nMission/Activités\n\n * Coordonner les actions opérationnelles internes (opérations, centres de compétences) et externes (Clients) en y associant l'équipe de gouvernance du projet le cas échéant\n * Préparer et animer les réunions de changement (CAB)\n * Etre garant de la gestion des demandes, de la gestion des incidents, de la gestion des changements au travers des différentes comitologies ITIL (CAB, revues quotidiennes, .)\n * Identifier les risques opérationnels\n * Assurer l'exécution des activités de service client dans le respect des engagements\n * Etre un acteur clé de la ",
+    "source": "France Travail",
+    "score": 50,
+    "detail_score": {
+      "stack": 5,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 5
+    },
+    "id": "4746ed8a57fa",
+    "statut": "postule",
+    "date_ajout": "2026-04-25",
+    "date_action": "2026-04-27"
+  },
+  {
+    "entreprise": "SILKHOM SAS",
+    "poste": "Développeur BI – Secteur des Vins & Spiritueux (H/F)",
+    "localisation": "67 - Strasbourg (67)",
+    "contrat": "CDI",
+    "stack": [
+      "REST"
+    ],
+    "contact": "",
+    "url": "https://candidat.francetravail.fr/offres/recherche/detail/1666022",
+    "description": "Description du poste:\nAu sein d’une équipe de 7 personnes (6 Développeurs BI et 1 Team Leader), vous interviendrez sur l’ensemble des sujets liés au développement, à l’exploitation et à l’évolution de la donnée, un enjeu stratégique et central pour le groupe.\n\n Vos principales missions :\n Conception et déploiement de solutions BI / Data : recueil et analyse des besoins métiers, modélisation des données, conception de rapports et participation aux tests et mises en production (environnement Qlik et DBT).\n Maintenance et support du reporting existant : gestion des incidents et des demandes, accompagnement et conseil auprès des métiers sur les outils BI (Business Objects, SAP DI, Qlik, DBT). \nAdministration des plateformes BI : participation à la gestion des environnements, des accès utilisateurs, des licences et des règles de sécurité.\n Transformation et amélioration de l’expérience utilisateur : contribution à la mise en place et à la consolidation de la plateforme BI / Dataviz, diffusion des bonnes pratiques et veille technologique continue.\n\n  Pourquoi rejoindre cette entreprise ?\n Groupe en forte croissance, en expansion sur de nouvelles zones géographiques, avec un chiffre d’affaires en progression (+8 % en 2025) et une forte culture d’innovation, notamment via le développement d’une nouvelle gamme de boissons sans alcool.\n\n Écosystème Data & BI riche et varié : Qlik Sense/View, SAP BO, Power BI, Looker, Tableau et SQL, avec de nombreux projets IT structurants, dont la migration vers Sage X3 en 2026.\n\n Poste à vision long terme, offrant de véritables perspectives d’évolution : vous participerez à la construction du Système Data pour les 20 prochaines années et bénéficierez d’une formation technique et fonctionnelle afin de devenir un référent BI du groupe.\n\n Avantages attractifs : participation de 800 €, intéressement de 1 900 €, 2 jours de télétravail par semaine, 13 jours de RTT et tickets restaurant de 8 € pris en charge à 60 %.\n\nProfil recherché:\nMinimum 5 an",
+    "source": "France Travail",
+    "score": 50,
+    "detail_score": {
+      "stack": 5,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 5
+    },
+    "id": "116e56ad600d",
+    "statut": "postule",
+    "date_ajout": "2026-04-25",
+    "date_action": "2026-04-27"
+  },
+  {
+    "entreprise": "EASTELSON",
+    "poste": "Développeur Java confirmé (H/F)",
+    "localisation": "67 - STRASBOURG (67)",
+    "contrat": "CDI",
+    "stack": [
+      "Java"
+    ],
+    "contact": "",
+    "url": "https://candidat.francetravail.fr/offres/recherche/detail/207BCZB",
+    "description": "Missions\n\nPlusieurs postes sont ouverts dans divers secteurs d'activité (bancaire, assurances, industrie, sécurité, public.).\nEn tant qu'analyste-développeur Java, vos missions seront les suivantes :\n- Analyse fonctionnelle et conception technique\n- Réalisation des développements\n- Tests et recette des outils\n- Support niveau 3 des applications\n\nProfil recherché\n- Formation initiale dans l'informatique (à partir de BAC+3)\n- Minimum 3 ans d'expérience en développement Java\n- Autonomie, capacité à travailler en équipe, curiosité et force de proposition\n\n\nAutres avantages : \nRTT, CE, abonnement sportif Wellpass, possibles primes de cooptation et d'apport d'affaires, plateforme de formation interne, afterworks mensuels\n\n",
+    "source": "France Travail",
+    "score": 45,
+    "detail_score": {
+      "stack": 0,
+      "localisation": 30,
+      "contrat": 10,
+      "qualite": 5
+    },
+    "id": "78fadac32bec",
+    "statut": "postule",
+    "date_ajout": "2026-04-25",
+    "date_action": "2026-04-25"
   }
 ]

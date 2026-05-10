@@ -241,7 +241,25 @@ def main():
     print(f"📊 Pipeline : {sum(1 for c in cands if c['statut'] in __import__('lib_excel').STATUTS_ACTIFS)} actifs | {len(relances_critiques)} relances critiques aujourd'hui")
     print(f"🎯 {len(top)} opportunité(s) qualifiée(s) (score ≥ 40/100)")
     print(f"📧 {emails_analyses} email(s) analysé(s) | {updates_ok} update(s) Excel effectué(s)")
-    print(f"📄 Export : {chemin}")
+
+    ok_updates = [u for u in updates_resultats if u.get("_ok")]
+    if ok_updates:
+        print("\n📋 Résumé des modifications :")
+        for u in ok_updates:
+            ligne = f"  • {u['entreprise']}"
+            if u.get("statut"):
+                ligne += f" → {u['statut']}"
+            else:
+                ligne += " → commentaire ajouté"
+            if u.get("date_contact"):
+                try:
+                    d = datetime.strptime(str(u["date_contact"]), "%Y-%m-%d").strftime("%d/%m")
+                    ligne += f" ({d})"
+                except Exception:
+                    pass
+            print(ligne)
+
+    print(f"\n📄 Export : {chemin}")
 
 
 if __name__ == "__main__":
