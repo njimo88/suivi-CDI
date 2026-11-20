@@ -49,6 +49,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from lib_excel import update_programmatic, ensure_exports_dir, parse_date
+from evenements_store import ajouter as ajouter_evenements
 
 
 def appliquer_entrees(entrees: list[dict]) -> list[dict]:
@@ -117,12 +118,13 @@ def main():
         print(f"❌ Fichier introuvable : {fichier}", file=sys.stderr)
         sys.exit(1)
 
-    with open(fichier, encoding="utf-8") as f:
+    with open(fichier, encoding="utf-8-sig") as f:
         data = json.load(f)
 
     today = data.get("date", date.today().isoformat())
     texte_original = data.get("texte_original", "")
     entrees = data.get("entrees", [])
+    evenements_bruts = data.get("evenements", [])
 
     print("📝 Application des entrées de log...")
     entrees_resultats = appliquer_entrees(entrees)
@@ -134,6 +136,10 @@ def main():
 
     if not entrees_resultats:
         print("   (aucune entrée à appliquer)")
+
+    if evenements_bruts:
+        res_evts = ajouter_evenements(evenements_bruts)
+        print(f"\n📅 Agenda : {res_evts['ajoutes']} événement(s) ajouté(s)")
 
     chemin = exporter_log(today, texte_original, entrees_resultats)
     ok_count = sum(1 for e in entrees_resultats if e.get("_ok"))

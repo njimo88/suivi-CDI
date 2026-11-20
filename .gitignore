@@ -5,3 +5,7 @@ suivi_backup_*.xlsx
 exports/daily_*.md
 exports/log_*.md
 exports/opportunites_*.md
+suivi_cdi.db
+flask_stdout.log
+flask_stderr.log
+_backup_2026-11-20/

@@ -72,8 +72,42 @@ LIEUX_REMOTE = {
 }
 LIEUX_GRANDES_VILLES = {
     "paris", "lyon", "bordeaux", "toulouse", "nantes", "lille",
-    "marseille", "montpellier", "rennes",
+    "marseille", "montpellier", "rennes", "nice",
 }
+
+# ── Filtres d'exclusion ───────────────────────────────────────────────────────
+
+# Mots dans le titre → offre exclue (senior, lead, alternance, stage)
+_TITRES_EXCLUS = [
+    "senior", "sénior", "sr.",
+    "lead dev", "lead développeur", "tech lead", "team lead",
+    "principal", "confirmé", "expérimenté",
+    "architecte logiciel", "architecte solution", "head of", "staff engineer",
+    "alternance", "alternant", "apprenti", "apprentissage", "contrat pro",
+    "stage ", "stagiaire",
+]
+
+# Valeurs du champ contrat → offre exclue
+_CONTRATS_EXCLUS = {
+    "alternance", "apprentissage", "stage", "contrat pro",
+    "contrat d'apprentissage",
+}
+
+
+def est_exclu(offre: dict) -> tuple[bool, str]:
+    """Retourne (True, raison) si l'offre doit être exclue du pipeline."""
+    titre   = (offre.get("poste") or "").lower()
+    contrat = (offre.get("contrat") or "").lower()
+
+    for mot in _CONTRATS_EXCLUS:
+        if mot in contrat:
+            return True, f"contrat exclu ({mot})"
+
+    for mot in _TITRES_EXCLUS:
+        if mot in titre:
+            return True, f"titre exclu ({mot})"
+
+    return False, ""
 
 
 def score_stack(stack_offre: list[str]) -> int:
@@ -106,9 +140,9 @@ def score_localisation(localisation: str) -> int:
 
     for mot in LIEUX_GRANDES_VILLES:
         if mot in loc:
-            return 10
+            return 20
 
-    return 0
+    return 5
 
 
 def score_contrat(contrat: str) -> int:
@@ -133,10 +167,11 @@ def score_qualite(contact: str, description: str) -> int:
 
 def scorer_offre(offre: dict) -> dict:
     """Calcule le score total d'une offre et retourne l'offre enrichie."""
-    s_stack = score_stack(offre.get("stack", []))
-    s_loc = score_localisation(offre.get("localisation", ""))
-    s_contrat = score_contrat(offre.get("contrat", ""))
-    s_qualite = score_qualite(offre.get("contact", ""), offre.get("description", ""))
+    # `or` plutôt que valeur par défaut de .get() : le JSON du /daily peut contenir null explicitement
+    s_stack = score_stack(offre.get("stack") or [])
+    s_loc = score_localisation(offre.get("localisation") or "")
+    s_contrat = score_contrat(offre.get("contrat") or "")
+    s_qualite = score_qualite(offre.get("contact") or "", offre.get("description") or "")
 
     total = s_stack + s_loc + s_contrat + s_qualite
 
@@ -152,36 +187,106 @@ def scorer_offre(offre: dict) -> dict:
     }
 
 
-def filtrer_doublons(offres: list[dict], candidatures=None) -> tuple[list[dict], list[str]]:
-    """Retire les entreprises déjà dans l'Excel. Retourne (offres_nouvelles, noms_ignores)."""
+def _ville_principale(loc: str) -> str:
+    """'Strasbourg (67)' → 'strasbourg'. '' → ''."""
+    import unicodedata
+    if not loc:
+        return ""
+    v = loc.split("(")[0].split(",")[0].strip().lower()
+    return unicodedata.normalize("NFKD", v).encode("ascii", "ignore").decode()
+
+
+# Une entreprise déjà contactée n'est cachée que si le contact est récent
+# ou si un process est en cours. Sinon l'offre reste visible avec un badge :
+# une boîte contactée il y a 3 mois peut avoir ouvert un nouveau poste.
+DELAI_RECONTACT_JOURS = 30
+STATUTS_PROCESS_EN_COURS = {"En cours", "Entretien prévu", "Offre"}
+
+
+def dernier_contact_entreprise(nom_entreprise: str, candidatures=None) -> dict | None:
+    """Candidature la plus récente pour cette entreprise (toutes lignes confondues), ou None."""
+    from lib_excel import normaliser_entreprise
+    if candidatures is None:
+        candidatures = load_candidatures()
+    nom_norm = normaliser_entreprise(nom_entreprise or "")
+    lignes = [c for c in candidatures if normaliser_entreprise(c.get("entreprise") or "") == nom_norm]
+    if not lignes:
+        return None
+
+    def _date_ref(c):
+        return c.get("date_contact") or c.get("date_cand") or date.min
+
+    return max(lignes, key=_date_ref)
+
+
+def info_deja_contacte(nom_entreprise: str, candidatures=None) -> dict | None:
+    """{date, statut, jours, cacher} si l'entreprise est dans le suivi, sinon None."""
+    c = dernier_contact_entreprise(nom_entreprise, candidatures)
+    if not c:
+        return None
+    d = c.get("date_contact") or c.get("date_cand")
+    jours = (date.today() - d).days if d else None
+    statut = c.get("statut") or ""
+    cacher = statut in STATUTS_PROCESS_EN_COURS or (jours is not None and jours < DELAI_RECONTACT_JOURS)
+    return {
+        "date": d.strftime("%d/%m/%Y") if d else "",
+        "statut": statut,
+        "jours": jours,
+        "cacher": cacher,
+    }
+
+
+def filtrer_doublons(offres: list[dict], candidatures=None, ignorer_doublons_entreprise: bool = False) -> tuple[list[dict], list[str]]:
+    """Cache seulement les offres d'entreprises contactées il y a moins de
+    DELAI_RECONTACT_JOURS jours ou avec un process en cours. Les autres restent,
+    avec un champ `deja_contacte` ("12/08/2026 — Pas de réponse").
+
+    ignorer_doublons_entreprise=True : ne cache rien (le badge est quand même ajouté).
+    """
     if candidatures is None:
         candidatures = load_candidatures()
 
     nouvelles = []
     ignores = []
     for o in offres:
-        existant = entreprise_existe_norm(o["entreprise"], candidatures)
-        if existant:
-            ignores.append(f"{o['entreprise']} (déjà trackée — statut: {existant['statut']})")
-        else:
-            nouvelles.append(o)
+        info = info_deja_contacte(o.get("entreprise"), candidatures)
+        if info:
+            if info["cacher"] and not ignorer_doublons_entreprise:
+                raison = (f"process en cours ({info['statut']})"
+                          if info["statut"] in STATUTS_PROCESS_EN_COURS
+                          else f"contactée il y a {info['jours']} j")
+                ignores.append(f"{o['entreprise']} — {raison}")
+                continue
+            o = {**o, "deja_contacte": f"{info['date']} — {info['statut']}"}
+        nouvelles.append(o)
     return nouvelles, ignores
 
 
-def traiter_offres(offres_brutes: list[dict]) -> dict:
-    """Pipeline complet : anti-doublon → scoring → filtre → top 6."""
+def traiter_offres(offres_brutes: list[dict], max_top: int = 30, ignorer_doublons_entreprise: bool = False) -> dict:
+    """Pipeline : exclusion senior/alternance → anti-doublon → scoring → filtre → top N."""
+    # 1. Exclure senior, alternance, stage avant tout scoring
+    retenues = []
+    exclues_profil: list[str] = []
+    for o in offres_brutes:
+        exclu, raison = est_exclu(o)
+        if exclu:
+            exclues_profil.append(f"{o['entreprise']} — {o.get('poste', '?')} ({raison})")
+        else:
+            retenues.append(o)
+
     candidatures = load_candidatures()
-    nouvelles, ignores = filtrer_doublons(offres_brutes, candidatures)
+    nouvelles, ignores = filtrer_doublons(retenues, candidatures, ignorer_doublons_entreprise)
 
     scorees = [scorer_offre(o) for o in nouvelles]
     filtrees = [o for o in scorees if o["score"] >= 40]
     filtrees.sort(key=lambda o: o["score"], reverse=True)
-    top = filtrees[:6]
-    exclues = [o for o in scorees if o["score"] < 40]
+    top = filtrees[:max_top]
+    exclues_score = [o for o in scorees if o["score"] < 40]
 
     return {
         "top": top,
-        "exclues": exclues,
+        "exclues": exclues_score,
+        "exclues_profil": exclues_profil,
         "ignores": ignores,
         "total_brut": len(offres_brutes),
     }

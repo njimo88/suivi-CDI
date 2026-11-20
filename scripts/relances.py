@@ -17,6 +17,13 @@ from lib_excel import (
 )
 from datetime import date
 
+# Nombre max de relances proposées par run de /relances. Sert à étaler un pic
+# de relances (ex : 14 candidatures qui arrivent toutes à J+7 la même semaine)
+# sur plusieurs jours au lieu de tout balancer d'un coup.
+# Les plus urgentes (CRITIQUE puis IMPORTANTE) sortent toujours en premier ;
+# le reste ressort au prochain run une fois les premières traitées via /update.
+RELANCES_PAR_JOUR = 3
+
 
 def generer_message(cand, ents_cand, jours):
     """Génère un message de relance adapté au contexte et à l'ancienneté du silence."""
@@ -119,7 +126,17 @@ def construire_relances(cands, ents):
     return relances
 
 
-def afficher_relances(relances):
+def selectionner_relances_du_jour(relances, limit=RELANCES_PAR_JOUR):
+    """Découpe la liste triée en (batch du jour, nombre en attente).
+
+    Les relances déjà traitées (statut/date_contact mis à jour via /update)
+    sortent de la liste au prochain calcul, donc le batch suivant remonte
+    naturellement au run suivant — pas besoin de mémoriser un état.
+    """
+    return relances[:limit], max(0, len(relances) - limit)
+
+
+def afficher_relances(relances, en_attente=0):
     """Affiche les relances dans le terminal."""
     print("=" * 70)
     print("  MESSAGES DE RELANCE À ENVOYER")
@@ -144,8 +161,12 @@ def afficher_relances(relances):
         print()
         print()
 
+    if en_attente:
+        print(f"⏳ {en_attente} autre(s) relance(s) en attente — ressortiront au prochain /relances une fois celles-ci traitées.")
+        print()
 
-def exporter_markdown(relances):
+
+def exporter_markdown(relances, en_attente=0):
     """Génère exports/relances_YYYY-MM-DD.md et retourne le chemin."""
     exports = ensure_exports_dir()
     nom_fichier = exports / f"relances_{date.today().isoformat()}.md"
@@ -169,6 +190,9 @@ def exporter_markdown(relances):
             lines.append("```\n")
             lines.append("---\n")
 
+    if en_attente:
+        lines.append(f"⏳ {en_attente} autre(s) relance(s) en attente — ressortiront au prochain `/relances` une fois celles-ci traitées.\n")
+
     nom_fichier.write_text("\n".join(lines), encoding="utf-8")
     return nom_fichier
 
@@ -177,13 +201,14 @@ def main():
     cands = load_candidatures()
     ents = load_entretiens()
 
-    relances = construire_relances(cands, ents)
+    toutes_relances = construire_relances(cands, ents)
+    relances, en_attente = selectionner_relances_du_jour(toutes_relances)
 
     # Affichage terminal (comportement inchangé)
-    afficher_relances(relances)
+    afficher_relances(relances, en_attente)
 
     # Export Markdown
-    chemin = exporter_markdown(relances)
+    chemin = exporter_markdown(relances, en_attente)
     print(f"📄 Export : {chemin}")
 
 

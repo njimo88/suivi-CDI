@@ -58,6 +58,9 @@ from opportunites import traiter_offres, exporter_markdown as exporter_md_opport
 from relances import construire_relances, load_candidatures, load_entretiens
 from offres_store import ajouter_offres
 from linkedin_store import ajouter_connexions
+from actions_store import ajouter_actions
+from evenements_store import ajouter as ajouter_evenements
+from informations_store import ajouter_informations
 
 
 def appliquer_updates(updates: list[dict]) -> list[dict]:
@@ -185,7 +188,7 @@ def main():
         print(f"❌ Fichier introuvable : {fichier}", file=sys.stderr)
         sys.exit(1)
 
-    with open(fichier, encoding="utf-8") as f:
+    with open(fichier, encoding="utf-8-sig") as f:
         data = json.load(f)
 
     today = data.get("date", date.today().isoformat())
@@ -194,6 +197,9 @@ def main():
     ignores = data.get("ignores", [])
     offres_brutes = data.get("offres", [])
     connexions_brutes = data.get("connexions", [])
+    actions_brutes = data.get("actions", [])
+    evenements_bruts = data.get("evenements", [])
+    informations_brutes = data.get("informations", [])
 
     # 1. Appliquer les updates Excel
     print("📝 Application des updates...")
@@ -219,7 +225,22 @@ def main():
         res_store = ajouter_offres(top)
         print(f"   → Store web : {res_store['ajoutees']} nouvelle(s) offre(s) ajoutée(s), {res_store['doublons']} doublon(s) ignoré(s)")
 
-    # 4. Top 3 relances critiques
+    # 4. Sauvegarder les actions du jour
+    if actions_brutes:
+        res_actions = ajouter_actions(actions_brutes, today)
+        print(f"\n⚡ Actions du jour : {res_actions['ajoutes']} action(s) enregistrée(s)")
+
+    # 4b. Sauvegarder les événements futurs détectés
+    if evenements_bruts:
+        res_evts = ajouter_evenements(evenements_bruts)
+        print(f"\n📅 Événements agenda : {res_evts['ajoutes']} ajouté(s), {res_evts['doublons']} doublon(s)")
+
+    # 4c. Sauvegarder les informations du jour (cumulées jusqu'à "Lu")
+    if informations_brutes:
+        res_infos = ajouter_informations(informations_brutes, today)
+        print(f"\nℹ️  Informations : {res_infos['ajoutes']} ajoutée(s), {res_infos['non_lus']} non lue(s) au total")
+
+    # 5. Top 3 relances critiques
     cands = load_candidatures()
     ents = load_entretiens()
     from relances import construire_relances

@@ -1,33 +1,23 @@
 #!/usr/bin/env python3
 """
-Gestion du store des messages LinkedIn à envoyer après acceptation de connexion.
-Fichier : exports/messages_linkedin.json
+Gestion du store des messages LinkedIn — lit/écrit dans SQLite via lib_db.
+Interface publique inchangée : ajouter_connexions, marquer, lister, stats, mettre_a_jour_entreprise.
 Statuts : "en_attente" | "envoye" | "ignore"
 """
-import json
 import hashlib
+import sys
 from datetime import date
 from pathlib import Path
-import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
-from lib_excel import ensure_exports_dir
-
-STORE_FILE = Path(__file__).parent.parent / "exports" / "messages_linkedin.json"
-
-
-def _charger() -> list[dict]:
-    if not STORE_FILE.exists():
-        return []
-    try:
-        return json.loads(STORE_FILE.read_text(encoding="utf-8"))
-    except Exception:
-        return []
-
-
-def _sauvegarder(msgs: list[dict]):
-    ensure_exports_dir()
-    STORE_FILE.write_text(json.dumps(msgs, ensure_ascii=False, indent=2), encoding="utf-8")
+from lib_db import (
+    init_db,
+    linkedin_lister, linkedin_stats,
+    linkedin_marquer as _db_marquer,
+    linkedin_update_entreprise as _db_update_entreprise,
+    linkedin_update_ville as _db_update_ville,
+    linkedin_ajouter as _db_ajouter,
+)
 
 
 def _id_msg(prenom: str, nom: str, date_str: str) -> str:
@@ -36,72 +26,48 @@ def _id_msg(prenom: str, nom: str, date_str: str) -> str:
 
 
 def ajouter_connexions(connexions: list[dict]) -> dict:
-    """
-    Ajoute des connexions LinkedIn acceptées.
-    connexions: [{prenom, nom, date_acceptation, thread_id?}]
-    Ignore les doublons (même prenom+nom+date).
-    """
-    existants = _charger()
-    ids_existants = {m["id"] for m in existants}
-
-    ajoutes = 0
-    doublons = 0
+    """Ajoute des connexions LinkedIn acceptées. Ignore les doublons."""
+    init_db()
+    today = date.today().isoformat()
+    batch = []
     for c in connexions:
-        mid = _id_msg(c["prenom"], c["nom"], c.get("date_acceptation", date.today().isoformat()))
-        if mid in ids_existants:
-            doublons += 1
-            continue
-        existants.append({
-            "id": mid,
-            "prenom": c["prenom"],
-            "nom": c["nom"],
-            "entreprise": c.get("entreprise"),
-            "date_acceptation": c.get("date_acceptation", date.today().isoformat()),
-            "thread_id": c.get("thread_id"),
-            "statut": "en_attente",
-            "date_action": None,
+        batch.append({
+            "id":               _id_msg(c["prenom"], c["nom"], c.get("date_acceptation", today)),
+            "prenom":           c["prenom"],
+            "nom":              c["nom"],
+            "entreprise":       c.get("entreprise"),
+            "ville":            c.get("ville"),
+            "date_acceptation": c.get("date_acceptation", today),
+            "thread_id":        c.get("thread_id"),
+            "statut":           "en_attente",
+            "date_action":      None,
         })
-        ids_existants.add(mid)
-        ajoutes += 1
-
-    _sauvegarder(existants)
-    return {"ajoutes": ajoutes, "doublons": doublons}
+    return _db_ajouter(batch)
 
 
 def mettre_a_jour_entreprise(msg_id: str, entreprise: str) -> bool:
-    msgs = _charger()
-    for m in msgs:
-        if m["id"] == msg_id:
-            m["entreprise"] = entreprise
-            _sauvegarder(msgs)
-            return True
-    return False
+    init_db()
+    _db_update_entreprise(msg_id, entreprise)
+    return True
+
+
+def mettre_a_jour_ville(msg_id: str, ville: str) -> bool:
+    init_db()
+    _db_update_ville(msg_id, ville)
+    return True
 
 
 def marquer(msg_id: str, statut: str) -> bool:
-    """Marque comme 'envoye' ou 'ignore'."""
-    msgs = _charger()
-    for m in msgs:
-        if m["id"] == msg_id:
-            m["statut"] = statut
-            m["date_action"] = date.today().isoformat()
-            _sauvegarder(msgs)
-            return True
-    return False
+    init_db()
+    _db_marquer(msg_id, statut)
+    return True
 
 
 def lister(statut: str = "en_attente") -> list[dict]:
-    msgs = _charger()
-    filtres = [m for m in msgs if m.get("statut") == statut]
-    filtres.sort(key=lambda m: m.get("date_acceptation", ""), reverse=True)
-    return filtres
+    init_db()
+    return linkedin_lister(statut)
 
 
 def stats() -> dict:
-    msgs = _charger()
-    return {
-        "en_attente": sum(1 for m in msgs if m.get("statut") == "en_attente"),
-        "envoye": sum(1 for m in msgs if m.get("statut") == "envoye"),
-        "ignore": sum(1 for m in msgs if m.get("statut") == "ignore"),
-        "total": len(msgs),
-    }
+    init_db()
+    return linkedin_stats()
