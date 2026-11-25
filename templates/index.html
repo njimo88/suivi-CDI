@@ -248,6 +248,13 @@
     .relance-card.cloture { border-left: 3px solid #d70015; background: #fff9f9; }
 
     .relance-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .canal-badge {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 6px;
+      padding: 4px 10px; border-radius: 8px; font-size: 12.5px; font-weight: 600;
+      background: #eef4ff; color: #0b4fb3; border: 1px solid #cfe0ff;
+    }
+    .canal-badge.inconnu { background: #fff4e5; color: #9a4b00; border-color: #ffd9a8; }
+    .canal-badge .canal-adr { font-weight: 500; user-select: all; }
     .btn-relance-ok, .btn-pas-opps {
       padding: 5px 12px; border-radius: 6px; border: 1px solid;
       cursor: pointer; font-size: 0.77rem; font-weight: 600;
@@ -1555,6 +1562,11 @@
         <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
         <span>Dashboard</span>
       </div>
+      <div class="nav-item" onclick="goTab('chasse', this)">
+        <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/></svg></span>
+        <span>Chasse du jour</span>
+        <span class="nav-badge" id="nb-chasse">0</span>
+      </div>
       <div class="nav-item" onclick="goTab('offres', this)">
         <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>
         <span>Offres</span>
@@ -2098,6 +2110,19 @@ DJILLY Nedjmeddine</p>
     </div>
 
     <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- PAGE : CHASSE DU JOUR (remplie par le skill /chasse)           -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div class="page" id="page-chasse">
+      <div class="agenda-header">
+        <div>
+          <h1 class="dash-greeting">Chasse du jour</h1>
+          <p class="dash-sub">4 entreprises qui recrutent un dev à Strasbourg, trouvées sur HelloWork, WTTJ et LinkedIn. Lance <span class="cmd-box">/chasse</span> dans Claude Code pour en avoir de nouvelles.</p>
+        </div>
+      </div>
+      <div id="chasse-list"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
     <!-- PAGE : ESN STRASBOURG (candidatures spontanées)                -->
     <!-- ══════════════════════════════════════════════════════════════ -->
     <div class="page" id="page-esn">
@@ -2158,6 +2183,7 @@ function goTab(id, el) {
   if (id === "agenda")   chargerAgendaFull();
   if (id === "apollo")   chargerApollo();
   if (id === "esn")      chargerEsn();
+  if (id === "chasse")   chargerChasse();
 }
 
 // ── Utils ─────────────────────────────────────────────────────────────────
@@ -2245,6 +2271,7 @@ async function chargerActions() {
           <div class="action-type-icon ${iconCls}">${meta.icon}</div>
           <div class="action-body">
             <div class="action-titre">${esc(a.titre)}</div>
+            ${(() => { const estRelance = a.type === "relance" || /relanc/i.test(a.titre || ""); return canalHtml(a.canal, estRelance || a.type === "message_linkedin", estRelance ? "Relancer par" : "Canal"); })()}
             ${a.description ? `<div class="action-desc">${esc(a.description)}</div>` : ""}
             ${a.contexte ? `<span class="action-ctx">${esc(a.contexte)}</span>` : ""}
             ${a.message ? `<div class="linkedin-msg-box action-msg">${esc(a.message)}<button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copierMsg(this)">Copier</button></div>` : ""}
@@ -2426,6 +2453,7 @@ async function chargerDashboard() {
             <div class="card-name">${esc(rel.entreprise)}</div>
             <div class="card-meta">${esc(rel.contact||"Sans contact")} · ${rel.jours}j de silence · ${esc(rel.poste||"poste non précisé")}${rel.localisation ? " · " + esc(rel.localisation) : ""}</div>
             ${rel.source ? `<span class="pill src" style="margin-top:4px;display:inline-flex">${sourcIcon(rel.source)} ${esc(rel.source)}</span>` : ""}
+            <div>${canalHtml(rel.canal, true)}</div>
           </div>
           ${badgeHtml}
         </div>
@@ -3076,6 +3104,84 @@ async function marquerApollo(id, statut, canal) {
   toast(statut === "envoye" ? `Envoyé via ${canal === "gmail" ? "Gmail" : "WhatsApp"}` : "⏭️ Ignoré");
 }
 
+// ── Chasse du jour (skill /chasse) ────────────────────────────────────────
+
+function _lienLinkedinEntreprise(nom) {
+  return "https://www.linkedin.com/search/results/companies/?keywords=" + encodeURIComponent(nom);
+}
+function _lienLinkedinRecruteurs(nom) {
+  return "https://www.linkedin.com/search/results/people/?keywords=" +
+    encodeURIComponent(nom + " recrutement OR talent acquisition OR RH");
+}
+
+async function chargerChasse() {
+  const list  = document.getElementById("chasse-list");
+  const badge = document.getElementById("nb-chasse");
+  let data;
+  try {
+    data = await (await fetch("/api/chasse")).json();
+  } catch (e) { console.error("chasse:", e); return; }
+
+  const n = data.stats.a_contacter;
+  badge.textContent   = n;
+  badge.style.display = n > 0 ? "inline-block" : "none";
+  if (!list) return;
+
+  if (!data.entreprises.length) {
+    list.innerHTML = `<div class="empty">Aucune entreprise à contacter. Lance <span class="cmd-box">/chasse</span> dans Claude Code pour en trouver 4 nouvelles.</div>`;
+    return;
+  }
+
+  const ico = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+  const liIco = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>';
+
+  list.innerHTML = data.entreprises.map(e => `
+    <div class="offre-card" id="chasse-${e.id}">
+      <div class="offre-header">
+        <div class="offre-info">
+          <div class="offre-name">${esc(e.entreprise)}</div>
+          <div class="offre-poste">${esc(e.poste || "Poste non précisé")}</div>
+        </div>
+      </div>
+      <div class="offre-meta">
+        ${e.localisation ? `<span class="offre-meta-tag omt-loc">${esc(e.localisation)}</span>` : ""}
+        ${e.source ? `<span class="offre-meta-tag omt-src">${esc(e.source)}</span>` : ""}
+        ${e.deja_contacte ? "" : `<span class="offre-meta-tag omt-cdi">Jamais contactée</span>`}
+      </div>
+      ${e.deja_contacte ? `<div class="offre-deja">Déjà contacté le ${esc(e.deja_contacte)}</div>` : ""}
+      ${e.raison ? `<div class="card-meta" style="margin-bottom:10px">${esc(e.raison)}</div>` : ""}
+      <div class="offre-actions-row">
+        <a class="btn btn-primary" href="${_lienLinkedinEntreprise(e.entreprise)}" target="_blank" rel="noopener">${liIco} Trouver sur LinkedIn</a>
+        <a class="btn-voir" href="${_lienLinkedinRecruteurs(e.entreprise)}" target="_blank" rel="noopener">Recruteurs ${ico}</a>
+        ${e.url_offre ? `<a class="btn-voir" href="${esc(e.url_offre)}" target="_blank" rel="noopener">Voir l'offre ${ico}</a>` : ""}
+        <button class="btn btn-green" onclick="marquerChasse('${e.id}','contacte')">Contacté</button>
+        <button class="btn btn-quiet" onclick="marquerChasse('${e.id}','ignore')">Ignorer</button>
+      </div>
+      <div class="offre-date-row">Trouvée le ${esc(e.date_ajout || "")}${e.date_publication ? ` · offre publiée le ${esc(e.date_publication)}` : ""}</div>
+    </div>`).join("");
+}
+
+async function marquerChasse(id, statut) {
+  const r = await fetch("/api/chasse/marquer", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({id, statut})
+  });
+  const data = await r.json();
+  if (!data.ok) { toast(data.msg || "Erreur", "err"); return; }
+  const card = document.getElementById(`chasse-${id}`);
+  if (card) {
+    card.style.transition = "opacity .3s";
+    card.style.opacity = "0";
+    setTimeout(() => { card.remove(); chargerChasse(); }, 300);
+  }
+  if (statut === "contacte") {
+    toast(data.suivi && data.suivi.ok ? "Ajoutée au suivi en « 1er contact »" : `Marquée contactée — ${data.suivi ? data.suivi.msg : ""}`);
+  } else {
+    toast("Ignorée");
+  }
+}
+
 // ── ESN Strasbourg (candidatures spontanées) ──────────────────────────────
 
 async function chargerEsn() {
@@ -3391,6 +3497,16 @@ function resetGenerateur() {
 
 const EVT_ICONS = { relance:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>', entretien:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>', rdv:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>', admin:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>', autre:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>' };
 
+// Badge « Relancer par : Gmail — adresse » (canal détecté côté serveur, lib_canal.py)
+function canalHtml(canal, obligatoire, label = "Relancer par") {
+  if (!canal || !canal.canal) {
+    return obligatoire ? `<span class="canal-badge inconnu">📍 ${label} : canal inconnu, à vérifier</span>` : "";
+  }
+  const ico = { Gmail: "📧", LinkedIn: "💼", WhatsApp: "💬", "Téléphone": "📞" }[canal.canal] || "📍";
+  const adr = canal.adresse ? ` — <span class="canal-adr">${esc(canal.adresse)}</span>` : "";
+  return `<span class="canal-badge">${ico} ${label} : ${esc(canal.canal)}${adr}</span>`;
+}
+
 function _evtCard(ev, compact) {
   const today = new Date(); today.setHours(0,0,0,0);
   let dateHtml = '<div class="evt-date-col"><div class="evt-date-day">—</div></div>';
@@ -3421,6 +3537,7 @@ function _evtCard(ev, compact) {
     ${dateHtml}
     <div class="evt-body">
       <div class="evt-titre">${esc(ev.titre)}</div>
+      ${ev.type === "relance" ? canalHtml(ev.canal, true) : ""}
       ${ev.description ? `<div class="evt-desc">${esc(ev.description)}</div>` : ""}
       <div class="evt-meta">${urgTag}${typeTag}${entTag}</div>
     </div>
@@ -3503,6 +3620,7 @@ chargerOffres();
 chargerLinkedin();
 chargerApollo();
 chargerEsn();
+chargerChasse();
 
 </script>
 

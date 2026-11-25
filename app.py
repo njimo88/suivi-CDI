@@ -26,6 +26,7 @@ from lib_excel import (
 )
 charger_dotenv()
 from relances import construire_relances, generer_message, selectionner_relances_du_jour
+from lib_canal import detecter_canal
 from offres_store import ajouter_offres, marquer, lister, stats as offres_stats, get_offre
 from fetch_jsearch import fetch_and_score as jsearch_fetch_and_score
 from opportunites import info_deja_contacte
@@ -387,6 +388,7 @@ def api_dashboard():
             "statut": c["statut"],
             "message": msg,
             "cloture": urgence == "CRITIQUE" and jours >= 60,
+            "canal": detecter_canal(c.get("commentaires"), contact=c.get("contact"), source=c.get("source")),
         })
 
     return jsonify({"stats": stats, "relances": relances, "relances_en_attente": en_attente})
@@ -592,6 +594,9 @@ def api_linkedin_marquer():
 @app.route("/api/actions-du-jour")
 def api_actions_du_jour():
     actions = actions_lister("a_faire")
+    for a in actions:
+        a["canal"] = detecter_canal(a.get("description"), a.get("contexte"), a.get("titre"),
+                                    a.get("message"), type_action=a.get("type"))
     s = actions_stats()
     return jsonify({"actions": actions, "stats": s})
 
@@ -626,6 +631,17 @@ def api_evenements():
     jours = request.args.get("jours")
     jours_max = int(jours) if jours and jours.isdigit() else None
     evs = ev_lister(statut, jours_max)
+    cands = None
+    for ev in evs:
+        ev["canal"] = detecter_canal(ev.get("description"), ev.get("titre"), contact=ev.get("contact"))
+        # Pas de canal écrit dans l'événement → on regarde la fiche candidature de l'entreprise
+        if not ev["canal"]["canal"] and ev.get("entreprise"):
+            cands = cands if cands is not None else load_candidatures()
+            nom = ev["entreprise"].strip().lower()
+            fiche = next((c for c in cands if (c.get("entreprise") or "").strip().lower() == nom), None)
+            if fiche:
+                ev["canal"] = detecter_canal(fiche.get("commentaires"), contact=fiche.get("contact"),
+                                             source=fiche.get("source"))
     s = ev_stats()
     return jsonify({"evenements": evs, "stats": s})
 
@@ -670,6 +686,42 @@ def api_apollo_marquer():
         return jsonify({"ok": False, "msg": "Canal requis (gmail ou whatsapp)"}), 400
     ok = apollo_marquer(prospect_id, statut, canal)
     return jsonify({"ok": ok})
+
+
+@app.route("/api/chasse")
+def api_chasse():
+    """Entreprises de la « Chasse du jour » (remplies par le skill /chasse)."""
+    from chasse_store import lister as chasse_lister, stats as chasse_stats
+    return jsonify({"entreprises": chasse_lister("a_contacter"), "stats": chasse_stats()})
+
+
+@app.route("/api/chasse/marquer", methods=["POST"])
+def api_chasse_marquer():
+    """contacte → ajoute aussi la candidature au suivi (1er contact) ; ignore → la retire."""
+    from chasse_store import marquer as chasse_marquer, get as chasse_get
+    data = request.get_json() or {}
+    chasse_id = data.get("id")
+    statut = data.get("statut")
+    if not chasse_id or statut not in ("contacte", "ignore"):
+        return jsonify({"ok": False, "msg": "Paramètres invalides"}), 400
+    e = chasse_get(chasse_id)
+    if not e:
+        return jsonify({"ok": False, "msg": "Entreprise introuvable"}), 404
+    suivi = None
+    if statut == "contacte":
+        ok_x, msg_x, new_id = ajouter_programmatic(
+            entreprise=e["entreprise"],
+            poste=e.get("poste") or "",
+            localisation=e.get("localisation") or "Strasbourg",
+            type_poste="Hybride",
+            contact="",
+            source=e.get("source") or "Chasse du jour",
+            stack="",
+            commentaires=f"[{date.today().strftime('%d/%m/%Y')}] Contactée depuis la Chasse du jour. {e.get('raison') or ''}".strip(),
+        )
+        suivi = {"ok": ok_x, "msg": msg_x, "id": new_id}
+    ok = chasse_marquer(chasse_id, statut)
+    return jsonify({"ok": ok, "suivi": suivi})
 
 
 @app.route("/api/esn")

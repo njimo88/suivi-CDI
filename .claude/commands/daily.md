@@ -89,8 +89,9 @@ Pour chaque thread de la Recherche 5 qui concerne la recherche d'emploi ou une m
      - `type: "relance"`
      - `date_echeance` = date d'envoi + 7 jours (+ 3 jours seulement si la personne ou le mail indique une urgence, par ex. mission qui démarre dans la semaine)
      - `id` = `"relance-<threadId>"`. Cet id fixe empêche le store d'ajouter un doublon lors des runs suivants. ⚠️ Le store refuse aussi un id déjà utilisé par un événement passé en `fait`. Si le fil a déjà eu une relance traitée (vérifie avec `SELECT id, statut FROM evenements WHERE id LIKE 'relance-<threadId>%'`), utilise `"relance-<threadId>-<date_echeance>"`.
-     - `titre` = `"Relancer [Prénom Nom] ([Entreprise]) — [sujet court]"`
-     - `description` = date d'envoi, destinataire(s), résumé en une ligne de ce qui a été envoyé
+     - `titre` = `"Relancer [Prénom Nom] ([Entreprise]) par [canal] — [sujet court]"` où `[canal]` = `Gmail`, `LinkedIn`, `WhatsApp`, `téléphone`… (le canal du dernier échange)
+     - `description` = commence par `Canal : [canal] ([adresse email ou profil])`, puis date d'envoi, destinataire(s), résumé en une ligne de ce qui a été envoyé
+     - ⚠️ **Toute relance (événement, action, récap du chat) doit préciser le canal.** Nedjmeddine doit savoir où relancer sans chercher.
      - `entreprise`, `contact` renseignés, `priorite: "normal"`
 3. Avant d'ajouter, vérifie qu'un événement `a_faire` n'existe pas déjà pour ce contact (ex : créé à la main lors d'un run précédent) :
 ```powershell

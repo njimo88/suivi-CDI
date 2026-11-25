@@ -125,6 +125,23 @@ CREATE TABLE IF NOT EXISTS esn_strasbourg (
     date_action  TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_esn_statut ON esn_strasbourg(statut);
+
+-- Chasse du jour : entreprises à contacter trouvées par le skill /chasse
+CREATE TABLE IF NOT EXISTS chasse_entreprises (
+    id               TEXT PRIMARY KEY,
+    entreprise       TEXT NOT NULL,
+    poste            TEXT,
+    localisation     TEXT,
+    source           TEXT,
+    url_offre        TEXT,
+    date_publication TEXT,
+    raison           TEXT,
+    deja_contacte    TEXT,
+    statut           TEXT DEFAULT 'a_contacter',
+    date_ajout       TEXT,
+    date_action      TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_chasse_statut ON chasse_entreprises(statut);
 """
 
 

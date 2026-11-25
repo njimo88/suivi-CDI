@@ -12,9 +12,11 @@ Outil de pilotage de recherche d'emploi. **Pas un outil d'automatisation massive
 
 1. **Jamais d'envoi automatique** de candidature, email ou message LinkedIn. L'outil prépare, l'humain décide et envoie.
 2. **Pas de scraping direct** LinkedIn ou de sites d'emploi via requests/Selenium. Les offres arrivent par **deux entrées seulement** : l'API JSearch (`scripts/fetch_jsearch.py`, bouton « Lancer une recherche » de l'onglet Offres) et les alertes email (`/opportunites`, `/daily`). Apify, JobSpy, France Travail et le scan freelance (Himalayas/Remotive/Jobicy) ont été retirés le 20/11/2026 — ne pas les réintroduire.
+   - **Exception : le skill `/chasse`** (`.claude/skills/chasse/SKILL.md`). Il lit HelloWork, WTTJ et LinkedIn avec `playwright-cli` attaché au **Chrome déjà ouvert** de Nedjmeddine, en lecture seule, **une page de résultats par site**, dans un onglet qu'il referme. C'est la seule automatisation de navigateur autorisée sur les sites d'emploi (demande du 25/11/2026). Jamais l'extension Claude in Chrome ni un autre navigateur pour ce skill.
 3. **Qualité > volume.** L'objectif est 5 candidatures ciblées/semaine max, pas 50.
 4. **Toujours tracker avant de proposer.** Avant de suggérer une nouvelle candidature, vérifier dans l'Excel que l'entreprise n'y figure pas déjà (anti-doublon strict).
 5. **Ton direct, sans complaisance.** Si Nedjmeddine traîne sur une relance, lui dire. Si une candidature est morte (>21 jours sans réponse), l'archiver, pas la maintenir en espoir.
+6. **Ne jamais proposer Crédit Mutuel, Euro-Information ni CIC** (même groupe), ni dans `/chasse`, ni dans `/opportunites`, ni dans aucune suggestion d'entreprise. Liste d'exclusion dans `scripts/chasse_import.py` (`EXCLUSIONS`).
 
 ### Pour le design / UI
 1. Si l'utilisateur fournit une image de référence (screenshot, mockup, wireframe) :
@@ -197,7 +199,7 @@ Quand l'utilisateur colle une nouvelle liste de prospects Apollo (export talent 
 
 Si l'utilisateur demande :
 - "Génère-moi 50 candidatures automatiquement" → **Refuser**, rappeler l'objectif qualité
-- "Scrape LinkedIn" → **Refuser**, expliquer les risques
+- "Scrape LinkedIn" → **Refuser** (risque de blocage du compte), sauf la lecture d'une page par jour faite par `/chasse`
 - "Envoie les emails tout seul" → **Refuser**, l'humain valide toujours
 - "Ajoute 20 boîtes d'un coup sans contact identifié" → **Négocier** : max 5 à la fois, avec justification
 
@@ -210,6 +212,8 @@ Si l'utilisateur demande :
 - `scripts/lib_excel.py` : fonctions partagées
 - `scripts/apollo_store.py` : CRUD + génération de message pour les prospects Apollo (table `prospects_apollo`)
 - `scripts/apollo_import.py` : importe une liste de prospects Apollo (JSON), avec anti-doublon contre `candidatures`
+- `scripts/chasse_import.py` + `scripts/chasse_store.py` : « Chasse du jour » (skill `/chasse`). L'import garde 4 entreprises (d'abord absentes du suivi, sinon contactées il y a plus de 30 jours), exclut Crédit Mutuel / Euro-Information / CIC et ce que `/chasse` a déjà proposé depuis 30 jours. Table `chasse_entreprises`, onglet « Chasse du jour » de l'app (bouton « Trouver sur LinkedIn », « Contacté » ajoute au suivi en `1er contact`).
+- `scripts/lib_canal.py` : détecte le canal d'une relance (Gmail + adresse, LinkedIn, WhatsApp, téléphone). `app.py` l'utilise pour afficher le badge « Relancer par : … » sur les relances, les actions du jour et l'agenda. Pour qu'il soit fiable, écrire `Canal : Gmail (adresse)` au début de la description de chaque événement ou action de relance.
 
 ## Stack technique
 
